@@ -547,10 +547,10 @@ get 'こんにちは', controller: 'welcome', action: 'index'
   # Rails 3.x
   match '/' => 'root#index'
 
-上のコードは以下のように変更する必要があります。
+  # 上のコードは以下のように変更する必要があります。
   match '/' => 'root#index', via: :get
 
-  # またはま
+  # または
   get '/' => 'root#index'
 ```
 
