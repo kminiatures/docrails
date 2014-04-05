@@ -231,9 +231,7 @@ $ rails generate generator rails/my_helper
       create  lib/generators/rails/my_helper/templates
 ```
 
-After that, we can delete both the `templates` directory and the `source_root`
-class method call from our new generator, because we are not going to need them.
-Add the method below, so our generator looks like the following:
+After that, we can delete both the `templates` directory and the `source_root` class method call from our new generator, because we are not going to need them. Add the method below, so our generator looks like the following:
 
 ```ruby
 # lib/generators/rails/my_helper/my_helper_generator.rb
