@@ -496,9 +496,7 @@ The `tmp:` namespaced tasks will help you clear and create the `Rails.root/tmp` 
 
 ### Custom Rake Tasks
 
-Custom rake tasks have a `.rake` extension and are placed in
-`Rails.root/lib/tasks`. You can create these custom rake tasks with the
-`bin/rails generate task` command.
+Custom rake tasks have a `.rake` extension and are placed in `Rails.root/lib/tasks`. You can create these custom rake tasks with the `bin/rails generate task` command.
 
 ```ruby
 desc "I am short, but comprehensive description for my cool task"

@@ -1587,15 +1587,13 @@ NB: The output may still contain unescaped '<', '>', '&' characters and confuse 
 
 ### CsrfHelper
 
-Returns meta tags "csrf-param" and "csrf-token" with the name of the cross-site
-request forgery protection parameter and token, respectively.
+Returns meta tags "csrf-param" and "csrf-token" with the name of the cross-site request forgery protection parameter and token, respectively.
 
 ```html
 <%= csrf_meta_tags %>
 ```
 
-NOTE: Regular forms generate hidden fields so they do not use these tags. More
-details can be found in the [Rails Security Guide](security.html#cross-site-request-forgery-csrf).
+NOTE: Regular forms generate hidden fields so they do not use these tags. More details can be found in the [Rails Security Guide](security.html#cross-site-request-forgery-csrf).
 
 Localized Views
 ---------------

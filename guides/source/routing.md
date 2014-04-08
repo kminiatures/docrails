@@ -487,10 +487,7 @@ end
 
 This will recognize `/photos/1/preview` with GET, and route to the `preview` action of `PhotosController`, with the resource id value passed in `params[:id]`. It will also create the `preview_photo_url` and `preview_photo_path` helpers.
 
-Within the block of member routes, each route name specifies the HTTP verb
-will be recognized. You can use `get`, `patch`, `put`, `post`, or `delete` here
-. If you don't have multiple `member` routes, you can also pass `:on` to a
-route, eliminating the block:
+Within the block of member routes, each route name specifies the HTTP verb will be recognized. You can use `get`, `patch`, `put`, `post`, or `delete` here. If you don't have multiple `member` routes, you can also pass `:on` to a route, eliminating the block:
 
 ```ruby
 resources :photos do
@@ -867,10 +864,7 @@ resources :user_permissions, controller: 'admin/user_permissions'
 
 This will route to the `Admin::UserPermissions` controller.
 
-NOTE: Only the directory notation is supported. Specifying the
-controller with Ruby constant notation (eg. `controller: 'Admin::UserPermissions'`)
-can lead to routing problems and results in
-a warning.
+NOTE: Only the directory notation is supported. Specifying the controller with Ruby constant notation (eg. `controller: 'Admin::UserPermissions'`) can lead to routing problems and results in a warning.
 
 ### Specifying Constraints
 

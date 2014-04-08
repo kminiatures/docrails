@@ -31,9 +31,7 @@ NOTE: This section is a work in progress.
 
 Or, "whaaat my tests are failing!!!?"
 
-Cross-site request forgery (CSRF) protection now covers GET requests with
-JavaScript responses, too. That prevents a third-party site from referencing
-your JavaScript URL and attempting to run it to extract sensitive data.
+Cross-site request forgery (CSRF) protection now covers GET requests with JavaScript responses, too. That prevents a third-party site from referencing your JavaScript URL and attempting to run it to extract sensitive data.
 
 This means that your functional and integration tests that use
 
@@ -49,8 +47,7 @@ xhr :get, :index, format: :js
 
 to explicitly test an XmlHttpRequest.
 
-If you really mean to load JavaScript from remote `<script>` tags, skip CSRF
-protection on that action.
+If you really mean to load JavaScript from remote `<script>` tags, skip CSRF protection on that action.
 
 ### Spring
 
@@ -60,14 +57,11 @@ If you want to use Spring as your application preloader you need to:
 2. Install spring using `bundle install`.
 3. Springify your binstubs with `bundle exec spring binstub --all`.
 
-NOTE: User defined rake tasks will run in the `development` environment by
-default. If you want them to run in other environments consult the
-[Spring README](https://github.com/rails/spring#rake).
+NOTE: User defined rake tasks will run in the `development` environment by default. If you want them to run in other environments consult the [Spring README](https://github.com/rails/spring#rake).
 
 ### `config/secrets.yml`
 
-If you want to use the new `secrets.yml` convention to store your application's
-secrets, you need to:
+If you want to use the new `secrets.yml` convention to store your application's secrets, you need to:
 
 1. Create a `secrets.yml` file in your `config` folder with the following content:
 
@@ -93,27 +87,19 @@ secrets, you need to:
 
 ### Changes to test helper
 
-If your test helper contains a call to
-`ActiveRecord::Migration.check_pending!` this can be removed. The check
-is now done automatically when you `require 'test_help'`, although
-leaving this line in your helper is not harmful in any way.
+If your test helper contains a call to `ActiveRecord::Migration.check_pending!` this can be removed. The check is now done automatically when you `require 'test_help'`, although leaving this line in your helper is not harmful in any way.
 
 ### Cookies serializer
 
-Applications created before Rails 4.1 uses `Marshal` to serialize cookie values into
-the signed and encrypted cookie jars. If you want to use the new `JSON`-based format
-in your application, you can add an initializer file with the following content:
+Applications created before Rails 4.1 uses `Marshal` to serialize cookie values into the signed and encrypted cookie jars. If you want to use the new `JSON`-based format in your application, you can add an initializer file with the following content:
 
   ```ruby
   Rails.application.config.cookies_serializer :hybrid
   ```
 
-This would transparently migrate your existing `Marshal`-serialized cookies into the
-new `JSON`-based format.
+This would transparently migrate your existing `Marshal`-serialized cookies into the new `JSON`-based format.
 
-When using the `:json` or `:hybrid` serializer, you should beware that not all
-Ruby objects can be serialized as JSON. For example, `Date` and `Time` objects
-will be serialized as strings, and `Hash`es will have their keys stringified.
+When using the `:json` or `:hybrid` serializer, you should beware that not all Ruby objects can be serialized as JSON. For example, `Date` and `Time` objects will be serialized as strings, and `Hash`es will have their keys stringified.
 
 ```ruby
 class CookiesController < ApplicationController
@@ -128,19 +114,13 @@ class CookiesController < ApplicationController
 end
 ```
 
-It's advisable that you only store simple data (strings and numbers) in cookies.
-If you have to store complex objects, you would need to handle the conversion
-manually when reading the values on subsequent requests.
+It's advisable that you only store simple data (strings and numbers) in cookies. If you have to store complex objects, you would need to handle the conversion manually when reading the values on subsequent requests.
 
-If you use the cookie session store, this would apply to the `session` and
-`flash` hash as well.
+If you use the cookie session store, this would apply to the `session` and `flash` hash as well.
 
 ### Flash structure changes
 
-Flash message keys are
-[normalized to strings](https://github.com/rails/rails/commit/a668beffd64106a1e1fedb71cc25eaaa11baf0c1). They
-can still be accessed using either symbols or strings. Lopping through the flash
-will always yield string keys:
+Flash message keys are [normalized to strings](https://github.com/rails/rails/commit/a668beffd64106a1e1fedb71cc25eaaa11baf0c1). They can still be accessed using either symbols or strings. Lopping through the flash will always yield string keys:
 
 ```ruby
 flash["string"] = "a string"
@@ -161,8 +141,7 @@ There are a few major changes related to JSON handling in Rails 4.1.
 
 #### MultiJSON removal
 
-MultiJSON has reached its [end-of-life](https://github.com/rails/rails/pull/10576)
-and has been removed from Rails.
+MultiJSON has reached its [end-of-life](https://github.com/rails/rails/pull/10576) and has been removed from Rails.
 
 If your application currently depend on MultiJSON directly, you have a few options:
 
@@ -170,19 +149,13 @@ If your application currently depend on MultiJSON directly, you have a few optio
 
 2. Migrate away from MultiJSON by using `obj.to_json`, and `JSON.parse(str)` instead.
 
-WARNING: Do not simply replace `MultiJson.dump` and `MultiJson.load` with
-`JSON.dump` and `JSON.load`. These JSON gem APIs are meant for serializing and
-deserializing arbitrary Ruby objects and are generally [unsafe](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/json/rdoc/JSON.html#method-i-load).
+WARNING: Do not simply replace `MultiJson.dump` and `MultiJson.load` with `JSON.dump` and `JSON.load`. These JSON gem APIs are meant for serializing and deserializing arbitrary Ruby objects and are generally [unsafe](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/json/rdoc/JSON.html#method-i-load).
 
 #### JSON gem compatibility
 
-Historically, Rails had some compatibility issues with the JSON gem. Using
-`JSON.generate` and `JSON.dump` inside a Rails application could produce
-unexpected errors.
+Historically, Rails had some compatibility issues with the JSON gem. Using `JSON.generate` and `JSON.dump` inside a Rails application could produce unexpected errors.
 
-Rails 4.1 fixed these issues by isolating its own encoder from the JSON gem. The
-JSON gem APIs will function as normal, but they will not have access to any
-Rails-specific features. For example:
+Rails 4.1 fixed these issues by isolating its own encoder from the JSON gem. The JSON gem APIs will function as normal, but they will not have access to any Rails-specific features. For example:
 
 ```ruby
 class FooBar
@@ -197,17 +170,13 @@ end
 
 #### New JSON encoder
 
-The JSON encoder in Rails 4.1 has been rewritten to take advantage of the JSON
-gem. For most applications, this should be a transparent change. However, as
-part of the rewrite, the following features have been removed from the encoder:
+The JSON encoder in Rails 4.1 has been rewritten to take advantage of the JSON gem. For most applications, this should be a transparent change. However, as part of the rewrite, the following features have been removed from the encoder:
 
 1. Circular data structure detection
 2. Support for the `encode_json` hook
 3. Option to encode `BigDecimal` objects as numbers instead of strings
 
-If your application depends on one of these features, you can get them back by
-adding the [`activesupport-json_encoder`](https://github.com/rails/activesupport-json_encoder)
-gem to your Gemfile.
+If your application depends on one of these features, you can get them back by adding the [`activesupport-json_encoder`](https://github.com/rails/activesupport-json_encoder) gem to your Gemfile.
 
 ### Usage of `return` within inline callback blocks
 
@@ -219,13 +188,9 @@ class ReadOnlyModel < ActiveRecord::Base
 end
 ```
 
-This behaviour was never intentionally supported. Due to a change in the internals
-of `ActiveSupport::Callbacks`, this is no longer allowed in Rails 4.1. Using a
-`return` statement in an inline callback block causes a `LocalJumpError` to
-be raised when the callback is executed.
+This behaviour was never intentionally supported. Due to a change in the internals of `ActiveSupport::Callbacks`, this is no longer allowed in Rails 4.1. Using a `return` statement in an inline callback block causes a `LocalJumpError` to be raised when the callback is executed.
 
-Inline callback blocks using `return` can be refactored to evaluate to the
-returned value:
+Inline callback blocks using `return` can be refactored to evaluate to the returned value:
 
 ```ruby
 class ReadOnlyModel < ActiveRecord::Base
@@ -233,8 +198,7 @@ class ReadOnlyModel < ActiveRecord::Base
 end
 ```
 
-Alternatively, if `return` is preferred it is recommended to explicitly define
-a method:
+Alternatively, if `return` is preferred it is recommended to explicitly define a method:
 
 ```ruby
 class ReadOnlyModel < ActiveRecord::Base
@@ -247,21 +211,15 @@ class ReadOnlyModel < ActiveRecord::Base
 end
 ```
 
-This change applies to most places in Rails where callbacks are used, including
-Active Record and Active Model callbacks, as well as filters in Action
-Controller (e.g. `before_action`).
+This change applies to most places in Rails where callbacks are used, including Active Record and Active Model callbacks, as well as filters in Action Controller (e.g. `before_action`).
 
-See [this pull request](https://github.com/rails/rails/pull/13271) for more
-details.
+See [this pull request](https://github.com/rails/rails/pull/13271) for more details.
 
 ### Methods defined in Active Record fixtures
 
-Rails 4.1 evaluates each fixture's ERB in a separate context, so helper methods
-defined in a fixture will not be available in other fixtures.
+Rails 4.1 evaluates each fixture's ERB in a separate context, so helper methods defined in a fixture will not be available in other fixtures.
 
-Helper methods that are used in multiple fixtures should be defined on modules
-included in the newly introduced `ActiveRecord::FixtureSet.context_class`, in
-`test_helper.rb`.
+Helper methods that are used in multiple fixtures should be defined on modules included in the newly introduced `ActiveRecord::FixtureSet.context_class`, in `test_helper.rb`.
 
 ```ruby
 class FixtureFileHelpers
@@ -274,28 +232,21 @@ ActiveRecord::FixtureSet.context_class.send :include, FixtureFileHelpers
 
 ### I18n enforcing available locales
 
-Rails 4.1 now defaults the I18n option `enforce_available_locales` to `true`,
-meaning that it will make sure that all locales passed to it must be declared in
-the `available_locales` list.
+Rails 4.1 now defaults the I18n option `enforce_available_locales` to `true`, meaning that it will make sure that all locales passed to it must be declared in the `available_locales` list.
 
-To disable it (and allow I18n to accept *any* locale option) add the following
-configuration to your application:
+To disable it (and allow I18n to accept *any* locale option) add the following configuration to your application:
 
 ```ruby
 config.i18n.enforce_available_locales = false
 ```
 
-Note that this option was added as a security measure, to ensure user input could
-not be used as locale information unless previously known, so it's recommended not
-to disable this option unless you have a strong reason for doing so.
+Note that this option was added as a security measure, to ensure user input could not be used as locale information unless previously known, so it's recommended not to disable this option unless you have a strong reason for doing so.
 
 ### Mutator methods called on Relation
 
-`Relation` no longer has mutator methods like `#map!` and `#delete_if`. Convert
-to an `Array` by calling `#to_a` before using these methods.
+`Relation` no longer has mutator methods like `#map!` and `#delete_if`. Convert to an `Array` by calling `#to_a` before using these methods.
 
-It intends to prevent odd bugs and confusion in code that call mutator
-methods directly on the `Relation`.
+It intends to prevent odd bugs and confusion in code that call mutator methods directly on the `Relation`.
 
 ```ruby
 # Instead of this
@@ -310,9 +261,7 @@ authors.compact!
 
 Default scopes are no longer overriden by chained conditions.
 
-In previous versions when you defined a `default_scope` in a model
-it was overriden by chained conditions in the same field. Now it
-is merged like any other scope.
+In previous versions when you defined a `default_scope` in a model it was overriden by chained conditions in the same field. Now it is merged like any other scope.
 
 Before:
 
@@ -375,22 +324,16 @@ User.inactive
 
 ### Rendering content from string
 
-Rails 4.1 introduces `:plain`, `:html`, and `:body` options to `render`. Those
-options are now the preferred way to render string-based content, as it allows
-you to specify which content type you want the response sent as.
+Rails 4.1 introduces `:plain`, `:html`, and `:body` options to `render`. Those options are now the preferred way to render string-based content, as it allows you to specify which content type you want the response sent as.
 
 * `render :plain` will set the content type to `text/plain`
 * `render :html` will set the content type to `text/html`
 * `render :body` will *not* set the content type header.
 
-From the security standpoint, if you don't expect to have any markup in your
-response body, you should be using `render :plain` as most browsers will escape
-unsafe content in the response for you.
+From the security standpoint, if you don't expect to have any markup in your response body, you should be using `render :plain` as most browsers will escape unsafe content in the response for you.
 
-We will be deprecating the use of `render :text` in a future version. So please
-start using the more precise `:plain:`, `:html`, and `:body` options instead.
-Using `render :text` may pose a security risk, as the content is sent as
-`text/html`.
+We will be deprecating the use of `render :text` in a future version. So please start using the more precise `:plain:`, `:html`, and `:body` options instead.
+Using `render :text` may pose a security risk, as the content is sent as `text/html`.
 
 Upgrading from Rails 3.2 to Rails 4.0
 -------------------------------------
@@ -401,10 +344,7 @@ The following changes are meant for upgrading your application to Rails 4.0.
 
 ### HTTP PATCH
 
-Rails 4 now uses `PATCH` as the primary HTTP verb for updates when a RESTful
-resource is declared in `config/routes.rb`. The `update` action is still used,
-and `PUT` requests will continue to be routed to the `update` action as well.
-So, if you're using only the standard RESTful routes, no changes need to be made:
+Rails 4 now uses `PATCH` as the primary HTTP verb for updates when a RESTful resource is declared in `config/routes.rb`. The `update` action is still used, and `PUT` requests will continue to be routed to the `update` action as well. So, if you're using only the standard RESTful routes, no changes need to be made:
 
 ```ruby
 resources :users
@@ -422,8 +362,7 @@ class UsersController < ApplicationController
 end
 ```
 
-However, you will need to make a change if you are using `form_for` to update
-a resource in conjunction with a custom route using the `PUT` HTTP method:
+However, you will need to make a change if you are using `form_for` to update a resource in conjunction with a custom route using the `PUT` HTTP method:
 
 ```ruby
 resources :users, do
@@ -443,12 +382,9 @@ class UsersController < ApplicationController
 end
 ```
 
-If the action is not being used in a public API and you are free to change the
-HTTP method, you can update your route to use `patch` instead of `put`:
+If the action is not being used in a public API and you are free to change the HTTP method, you can update your route to use `patch` instead of `put`:
 
-`PUT` requests to `/users/:id` in Rails 4 get routed to `update` as they are
-today. So, if you have an API that gets real PUT requests it is going to work.
-The router also routes `PATCH` requests to `/users/:id` to the `update` action.
+`PUT` requests to `/users/:id` in Rails 4 get routed to `update` as they are today. So, if you have an API that gets real PUT requests it is going to work. The router also routes `PATCH` requests to `/users/:id` to the `update` action.
 
 ```ruby
 resources :users do
@@ -456,8 +392,7 @@ resources :users do
 end
 ```
 
-If the action is being used in a public API and you can't change to HTTP method
-being used, you can update your form to use the `PUT` method instead:
+If the action is being used in a public API and you can't change to HTTP method being used, you can update your form to use the `PUT` method instead:
 
 ```erb
 <%= form_for [ :update_name, @user ], method: :put do |f| %>
@@ -468,10 +403,7 @@ on the Rails blog.
 
 #### A note about media types
 
-The errata for the `PATCH` verb [specifies that a 'diff' media type should be
-used with `PATCH`](http://www.rfc-editor.org/errata_search.php?rfc=5789). One
-such format is [JSON Patch](http://tools.ietf.org/html/rfc6902). While Rails
-does not support JSON Patch natively, it's easy enough to add support:
+The errata for the `PATCH` verb [specifies that a 'diff' media type should be used with `PATCH`](http://www.rfc-editor.org/errata_search.php?rfc=5789). One such format is [JSON Patch](http://tools.ietf.org/html/rfc6902). While Rails does not support JSON Patch natively, it's easy enough to add support:
 
 ```
 # in your controller
@@ -492,16 +424,11 @@ end
 Mime::Type.register 'application/json-patch+json', :json_patch
 ```
 
-As JSON Patch was only recently made into an RFC, there aren't a lot of great
-Ruby libraries yet. Aaron Patterson's
-[hana](https://github.com/tenderlove/hana) is one such gem, but doesn't have
-full support for the last few changes in the specification.
+As JSON Patch was only recently made into an RFC, there aren't a lot of great Ruby libraries yet. Aaron Patterson's [hana](https://github.com/tenderlove/hana) is one such gem, but doesn't have full support for the last few changes in the specification.
 
 ### Gemfile
 
-Rails 4.0 removed the `assets` group from Gemfile. You'd need to remove that
-line from your Gemfile when upgrading. You should also update your application
-file (in `config/application.rb`):
+Rails 4.0 removed the `assets` group from Gemfile. You'd need to remove that line from your Gemfile when upgrading. You should also update your application file (in `config/application.rb`):
 
 ```ruby
 # Require the gems listed in Gemfile, including any gems
@@ -525,8 +452,7 @@ Rails 4.0 no longer supports loading plugins from `vendor/plugins`. You must rep
 
 * Rails 4.0 has removed `attr_accessible` and `attr_protected` feature in favor of Strong Parameters. You can use the [Protected Attributes gem](https://github.com/rails/protected_attributes) for a smooth upgrade path.
 
-* If you are not using Protected Attributes, you can remove any options related to
-this gem such as `whitelist_attributes` or `mass_assignment_sanitizer` options.
+* If you are not using Protected Attributes, you can remove any options related to this gem such as `whitelist_attributes` or `mass_assignment_sanitizer` options.
 
 * Rails 4.0 requires that scopes use a callable object such as a Proc or lambda:
 
@@ -541,11 +467,9 @@ this gem such as `whitelist_attributes` or `mass_assignment_sanitizer` options.
 
 * Rails 4.0 has deprecated `ActiveRecord::TestCase` in favor of `ActiveSupport::TestCase`.
 
-* Rails 4.0 has deprecated the old-style hash based finder API. This means that
-  methods which previously accepted "finder options" no longer do.
+* Rails 4.0 has deprecated the old-style hash based finder API. This means that methods which previously accepted "finder options" no longer do.
 
-* All dynamic methods except for `find_by_...` and `find_by_...!` are deprecated.
-  Here's how you can handle the changes:
+* All dynamic methods except for `find_by_...` and `find_by_...!` are deprecated. Here's how you can handle the changes:
 
       * `find_all_by_...`           becomes `where(...)`.
       * `find_last_by_...`          becomes `where(...).last`.
@@ -606,10 +530,8 @@ Please read [Pull Request #9978](https://github.com/rails/rails/pull/9978) for d
 
 * Rails 4.0 deprecates the `dom_id` and `dom_class` methods in controllers (they are fine in views). You will need to include the `ActionView::RecordIdentifier` module in controllers requiring this feature.
 
-* Rails 4.0 deprecates the `:confirm` option for the `link_to` helper. You should
-instead rely on a data attribute (e.g. `data: { confirm: 'Are you sure?' }`).
-This deprecation also concerns the helpers based on this one (such as `link_to_if`
-or `link_to_unless`).
+* Rails 4.0 deprecates the `:confirm` option for the `link_to` helper. You should instead rely on a data attribute (e.g. `data: { confirm: 'Are you sure?' }`).
+This deprecation also concerns the helpers based on this one (such as `link_to_if` or `link_to_unless`).
 
 * Rails 4.0 changed how `assert_generates`, `assert_recognizes`, and `assert_routing` work. Now all these assertions raise `Assertion` instead of `ActionController::RoutingError`.
 
@@ -625,10 +547,7 @@ or `link_to_unless`).
   get 'clashing/:id' => 'test#example', as: :example
 ```
 
-In the first case, you can simply avoid using the same name for multiple
-routes. In the second, you can use the `only` or `except` options provided by
-the `resources` method to restrict the routes created as detailed in the
-[Routing Guide](routing.html#restricting-the-routes-created).
+In the first case, you can simply avoid using the same name for multiple routes. In the second, you can use the `only` or `except` options provided by the `resources` method to restrict the routes created as detailed in the [Routing Guide](routing.html#restricting-the-routes-created).
 
 * Rails 4.0 also changed the way unicode character routes are drawn. Now you can draw unicode character routes directly. If you already draw such routes, you must change them, for example:
 
@@ -713,8 +632,7 @@ Upgrading from Rails 3.1 to Rails 3.2
 
 If your application is currently on any version of Rails older than 3.1.x, you should upgrade to Rails 3.1 before attempting an update to Rails 3.2.
 
-The following changes are meant for upgrading your application to Rails 3.2.17,
-the last 3.2.x version of Rails.
+The following changes are meant for upgrading your application to Rails 3.2.17, the last 3.2.x version of Rails.
 
 ### Gemfile
 
