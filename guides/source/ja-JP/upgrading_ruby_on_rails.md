@@ -26,8 +26,6 @@ Railsは、そのバージョンがリリースされた時点で最新のバー
 Rails 4.0からRails 4.1へのアップグレード
 -------------------------------------
 
-メモ: このセクションはまだ完成していません。
-
 ### リモート `<script>` タグにCSRF保護を実施
 
 これを行わないと、「なぜかテストがとおらない...orz」ということになりかねません。
@@ -74,11 +72,11 @@ XmlHttpRequestを明示的にテストしてください。
       secret_key_base:
 
     production:
-      secret_key_base:
+      secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
     ```
 
-2. 既存の`secret_key_base`を`secret_token.rb`イニシャライザから`secrets.yml`の`production`セクションにコピーします。
-
+2. `secret_token.rb`イニシャライザにある既存の`secret_key_base`を使用してSECRET_KEY_BASE環境変数を設定し、どのユーザーでもRailsアプリケーションをproductionモードで実行できるようにしてください。あるいは、既存の`secret_key_base`を`secret_token.rb`イニシャライザから`secrets.yml`の`production`セクションにコピーし、'<%= ENV["SECRET_KEY_BASE"] %>'を置き換えてもよいです。
+   
 3. `secret_token.rb`イニシャライザを削除します
 
 4. `rake secret`を実行し、`development`セクション`test`セクションに新しい鍵を生成します。
@@ -94,10 +92,29 @@ XmlHttpRequestを明示的にテストしてください。
 Rails 4.1より前に作成されたアプリケーションでは、`Marshal`を使用してcookie値を署名済みまたは暗号化したcookies jarにシリアライズしていました。アプリケーションで新しい`JSON`ベースのフォーマットを使用したい場合、以下のような内容を持つイニシャライザファイルを追加できます。
 
 ```ruby
-  Rails.application.config.cookies_serializer :hybrid
-  ```
+Rails.application.config.action_dispatch.cookies_serializer = :hybrid
+```
 
 これにより、`Marshal`でシリアライズされた既存のcookiesを、新しい`JSON`ベースのフォーマットに透過的に移行できます。
+
+`:json`または`:hybrid`シリアライザを使用する場合、一部のRubyオブジェクトがJSONとしてシリアライズされない可能性があることにご注意ください。たとえば、`Date`オブジェクトや`Time`オブジェクトはstringsとしてシリアライズされ、`Hash`のキーはstringに変換されます。
+
+```ruby
+class CookiesController < ApplicationController
+  def set_cookie
+    cookies.encrypted[:expiration_date] = Date.tomorrow # => Thu, 20 Mar 2014
+    redirect_to action: 'read_cookie'
+end
+
+  def read_cookie 
+    cookies.encrypted[:expiration_date] # => "2014-03-20"
+  end
+end
+```
+
+cookiesには文字列や数字などの単純なデータだけを保存することをお勧めします。cookiesに複雑なオブジェクトを保存しなければならない場合は、後続のリクエストでcookiesから値を読み出す場合の変換については自分で面倒を見る必要があります。
+
+cookieセッションストアを使用する場合、`session`や`flash`ハッシュについてもこのことは該当します。
 
 ### Flash構造の変更
 
@@ -322,8 +339,7 @@ Railsアプリケーションのバージョンが3.2より前の場合、まず
 
 ### HTTP PATCH
 
-Rails 4では、`config/routes.rb`でRESTfulなリソースが宣言されたときに、更新用の主要なHTTP verbとして`PATCH`が使用されるようになりました。`update`アクションは従来通り使用でき、`PUT`リクエストは今後も`update`アクションにルーティングされます。
-標準的なRESTfulのみを使用しているのであれば、これに関する変更は不要です。
+Rails 4では、`config/routes.rb`でRESTfulなリソースが宣言されたときに、更新用の主要なHTTP verbとして`PATCH`が使用されるようになりました。`update`アクションは従来通り使用でき、`PUT`リクエストは今後も`update`アクションにルーティングされます。標準的なRESTfulのみを使用しているのであれば、これに関する変更は不要です。
 
 ```ruby
 resources :users
@@ -451,11 +467,11 @@ Rails 4.0 では `vendor/plugins` 読み込みのサポートは完全に終了�
 * 動的なメソッドは、`find_by_...`と`find_by_...!`を除いて非推奨となりました。
   以下のように変更してください。
 
-      * `find_all_by_...`          に代えて`where(...)を使用
+      * `find_all_by_...`          に代えて`where(...)を使用`.
       * `find_last_by_...`        に代えて`where(...).last`を使用
-      * `scoped_by_...`            に代えて`where(...)`を使用
-      * `find_or_initialize_by_...` に代えて`find_or_initialize_by(...)`を使用
-      * `find_or_create_by_...`   に代えて`find_or_create_by(...)`を使用
+      * `scoped_by_...`            に代えて`where(...)`を使用`.
+      * `find_or_initialize_by_...` に代えて`find_or_initialize_by(...)`を使用`.
+      * `find_or_create_by_...`   に代えて`find_or_create_by(...)`を使用`.
 
 * 旧来のfinderが配列を返していたのに対し、`where(...)`はリレーションを返します。`Array`が必要な場合は, `where(...).to_a`を使用してください。
 
@@ -510,10 +526,10 @@ Rails 4.0ではActive Resourceがgem化されました。この機能が必要�
 
 * Rails 4.0ではコントローラでの`dom_id`および`dom_class`メソッドの使用が非推奨になりました (ビューでの使用は問題ありません)。この機能が必要なコントローラでは`ActionView::RecordIdentifier`モジュールをインクルードする必要があります。
 
-* Rails 4.0では`link_to`ヘルパーでの`:confirm`オプションが非推奨になりました。代りにデータ属性を使用してください (例： `data: { confirm: 'Are you sure?' }`)
+* Rails 4.0では`link_to`ヘルパーでの`:confirm`オプションが非推奨になりました。代りにデータ属性を使用してください (例： `data: { confirm: 'Are you sure?' }`)}`).
 `link_to_if`や`link_to_unless`などでも同様の対応が必要です。
 
-* Rails 4.0では`assert_generates`、`assert_recognizes`、`assert_routing`の動作が変更されましたこれらのアサーションからは`ActionController::RoutingError`の代りに`Assertion`が発生するようになりました。
+* Rails 4.0では`assert_generates`、`assert_recognizes`、`assert_routing`の動作が変更されました。これらのアサーションからは`ActionController::RoutingError`の代りに`Assertion`が発生するようになりました。
 
 * Rails 4.0では、名前付きルートの定義が重複している場合に`ArgumentError`が発生するようになりました。このエラーは、明示的に定義された名前付きルートや`resources`メソッドによってトリガされます。名前付きルート`example_path`が衝突している例を2つ示します。
 
@@ -646,8 +662,7 @@ config.active_record.auto_explain_threshold_in_seconds = 0.5
 `mass_assignment_sanitizer`設定を`config/environments/test.rb`にも追加する必要があります。
 
 ```ruby
-# Active Recordのモデルをマスアサインメントから保護するために例外を発生する
-config.active_record.mass_assignment_sanitizer = :strict
+# Active Recordのモデルをマスアサインメントから保護するために例外を発生する config.active_record.mass_assignment_sanitizer = :strict
 ```
 
 ### vendor/plugins
@@ -680,7 +695,7 @@ group :assets do
   gem 'uglifier',     '>= 1.0.3'
 end
 
-# Rails 3.1からJQueryがデフォルトのJavaScriptライブラリになる
+# Rails 3.1からjQueryがデフォルトのJavaScriptライブラリになる
 gem 'jquery-rails'
 ```
 
