@@ -340,6 +340,17 @@ class BelongsToAssociationsTest < ActiveRecord::TestCase
     assert_queries(1) { line_item.touch }
   end
 
+  def test_belongs_to_with_touch_option_on_touch_without_updated_at_attributes
+    assert_not LineItem.column_names.include?("updated_at")
+
+    line_item = LineItem.create!
+    invoice = Invoice.create!(line_items: [line_item])
+    initial = invoice.updated_at
+    line_item.touch
+
+    assert_not_equal initial, invoice.reload.updated_at
+  end
+
   def test_belongs_to_with_touch_option_on_touch_and_removed_parent
     line_item = LineItem.create!
     Invoice.create!(line_items: [line_item])
@@ -822,6 +833,17 @@ class BelongsToAssociationsTest < ActiveRecord::TestCase
 
     assert_equal nil, comment.reload.parent
     assert_equal 0, comments(:greetings).reload.children_count
+  end
+
+  def test_belongs_to_with_id_assigning
+    post = posts(:welcome)
+    comment = Comment.create! body: "foo", post: post
+    parent = comments(:greetings)
+    assert_equal 0, parent.reload.children_count
+    comment.parent_id = parent.id
+
+    comment.save!
+    assert_equal 1, parent.reload.children_count
   end
 
   def test_polymorphic_with_custom_primary_key

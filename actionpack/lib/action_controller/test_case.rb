@@ -267,6 +267,18 @@ module ActionController
     def body
       @body ||= super
     end
+
+    # Was the response successful?
+    alias_method :success?, :successful?
+
+    # Was the URL not found?
+    alias_method :missing?, :not_found?
+
+    # Were we redirected?
+    alias_method :redirect?, :redirection?
+
+    # Was there a server-side error?
+    alias_method :error?, :server_error?
   end
 
   # Methods #destroy and #load! are overridden to avoid calling methods on the
@@ -474,8 +486,8 @@ module ActionController
       # - +session+: A hash of parameters to store in the session. This may be +nil+.
       # - +flash+: A hash of parameters to store in the flash. This may be +nil+.
       #
-      # You can also simulate POST, PATCH, PUT, DELETE, HEAD, and OPTIONS requests with
-      # +post+, +patch+, +put+, +delete+, +head+, and +options+.
+      # You can also simulate POST, PATCH, PUT, DELETE, and HEAD requests with
+      # +post+, +patch+, +put+, +delete+, and +head+.
       #
       # Note that the request method is not verified. The different methods are
       # available to make the tests more expressive.
@@ -583,7 +595,9 @@ module ActionController
         @controller.process(name)
 
         if cookies = @request.env['action_dispatch.cookies']
-          cookies.write(@response)
+          unless @response.committed?
+            cookies.write(@response)
+          end
         end
         @response.prepare!
 

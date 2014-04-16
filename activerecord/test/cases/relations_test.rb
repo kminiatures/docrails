@@ -637,7 +637,7 @@ class RelationTest < ActiveRecord::TestCase
 
   def test_find_with_list_of_ar
     author = Author.first
-    authors = Author.find([author])
+    authors = Author.find([author.id])
     assert_equal author, authors.first
   end
 
@@ -769,7 +769,7 @@ class RelationTest < ActiveRecord::TestCase
     assert ! davids.exists?(authors(:mary).id)
     assert ! davids.exists?("42")
     assert ! davids.exists?(42)
-    assert ! davids.exists?(davids.new)
+    assert ! davids.exists?(davids.new.id)
 
     fake  = Author.where(:name => 'fake author')
     assert ! fake.exists?
@@ -1363,6 +1363,14 @@ class RelationTest < ActiveRecord::TestCase
     assert_equal ['comments'], scope.references_values
 
     scope = Post.where('comments.body' => 'Bla')
+    assert_equal ['comments'], scope.references_values
+  end
+
+  def test_automatically_added_where_not_references
+    scope = Post.where.not(comments: { body: "Bla" })
+    assert_equal ['comments'], scope.references_values
+
+    scope = Post.where.not('comments.body' => 'Bla')
     assert_equal ['comments'], scope.references_values
   end
 

@@ -407,19 +407,19 @@ class EagerAssociationTest < ActiveRecord::TestCase
   end
 
   def test_eager_load_has_one_quotes_table_and_column_names
-    michael = Person.all.merge!(:includes => :favourite_reference).find(people(:michael))
+    michael = Person.all.merge!(:includes => :favourite_reference).find(people(:michael).id)
     references(:michael_unicyclist)
     assert_no_queries{ assert_equal references(:michael_unicyclist), michael.favourite_reference}
   end
 
   def test_eager_load_has_many_quotes_table_and_column_names
-    michael = Person.all.merge!(:includes => :references).find(people(:michael))
+    michael = Person.all.merge!(:includes => :references).find(people(:michael).id)
     references(:michael_magician,:michael_unicyclist)
     assert_no_queries{ assert_equal references(:michael_magician,:michael_unicyclist), michael.references.sort_by(&:id) }
   end
 
   def test_eager_load_has_many_through_quotes_table_and_column_names
-    michael = Person.all.merge!(:includes => :jobs).find(people(:michael))
+    michael = Person.all.merge!(:includes => :jobs).find(people(:michael).id)
     jobs(:magician, :unicyclist)
     assert_no_queries{ assert_equal jobs(:unicyclist, :magician), michael.jobs.sort_by(&:id) }
   end
@@ -1201,6 +1201,16 @@ class EagerAssociationTest < ActiveRecord::TestCase
     }
     assert_no_queries {
       assert_equal 5, author.posts.size
+    }
+  end
+
+  test "including associations with where.not adds implicit references" do
+    author = assert_queries(2) {
+      Author.includes(:posts).where.not(posts: { title: 'Welcome to the weblog'} ).last
+    }
+
+    assert_no_queries {
+      assert_equal 2, author.posts.size
     }
   end
 end

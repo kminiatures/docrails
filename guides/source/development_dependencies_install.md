@@ -69,8 +69,7 @@ On FreeBSD, you just have to run:
 # pkg_add -r libxml2 libxslt
 ```
 
-Alternatively, you can install the `textproc/libxml2` and `textproc/libxslt`
-ports.
+Alternatively, you can install the `textproc/libxml2` and `textproc/libxslt` ports.
 
 If you have any problems with these libraries, you can install them manually by compiling the source code. Just follow the instructions at the [Red Hat/CentOS section of the Nokogiri tutorials](http://nokogiri.org/tutorials/installing_nokogiri.html#red_hat__centos) .
 
@@ -211,8 +210,7 @@ FreeBSD users will have to run the following:
 ```
 
 Or install them through ports (they are located under the `databases` folder).
-If you run into troubles during the installation of MySQL, please see
-[the MySQL documentation](http://dev.mysql.com/doc/refman/5.1/en/freebsd-installation.html).
+If you run into troubles during the installation of MySQL, please see [the MySQL documentation](http://dev.mysql.com/doc/refman/5.1/en/freebsd-installation.html).
 
 After that, run:
 

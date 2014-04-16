@@ -44,7 +44,7 @@ module ActionController
     tests SSETestController
 
     def wait_for_response_stream_close
-      response.stream.await_close
+      response.body
     end
 
     def test_basic_sse
@@ -102,6 +102,12 @@ module ActionController
         'test'
       end
 
+      def set_cookie
+        cookies[:hello] = "world"
+        response.stream.write "hello world"
+        response.close
+      end
+
       def render_text
         render :text => 'zomg'
       end
@@ -147,6 +153,11 @@ module ActionController
         render 'doesntexist'
       end
 
+      def exception_in_view_after_commit
+        response.stream.write ""
+        render 'doesntexist'
+      end
+
       def exception_with_callback
         response.headers['Content-Type'] = 'text/event-stream'
 
@@ -180,8 +191,8 @@ module ActionController
     tests TestController
 
     def assert_stream_closed
-      response.stream.await_close
       assert response.stream.closed?, 'stream should be closed'
+      assert response.sent?, 'stream should be sent'
     end
 
     def capture_log_output
@@ -193,6 +204,13 @@ module ActionController
       ensure
         ActionController::Base.logger = old_logger
       end
+    end
+
+    def test_set_cookie
+      @controller = TestController.new
+      get :set_cookie
+      assert_equal({'hello' => 'world'}, @response.cookies)
+      assert_equal "hello world", @response.body
     end
 
     def test_set_response!
@@ -216,6 +234,7 @@ module ActionController
       @controller.response = @response
 
       t = Thread.new(@response) { |resp|
+        resp.await_commit
         resp.stream.each do |part|
           assert_equal parts.shift, part
           ol = @controller.latch
@@ -255,12 +274,27 @@ module ActionController
       assert_raises(ActionView::MissingTemplate) do
         get :exception_in_view
       end
+
+      capture_log_output do |output|
+        get :exception_in_view_after_commit
+        assert_match %r((window\.location = "/500\.html"</script></html>)$), response.body
+        assert_match 'Missing template test/doesntexist', output.rewind && output.read
+        assert_stream_closed
+      end
+      assert response.body
       assert_stream_closed
     end
 
     def test_exception_handling_plain_text
       assert_raises(ActionView::MissingTemplate) do
         get :exception_in_view, format: :json
+      end
+
+      capture_log_output do |output|
+        get :exception_in_view_after_commit, format: :json
+        assert_equal '', response.body
+        assert_match 'Missing template test/doesntexist', output.rewind && output.read
+        assert_stream_closed
       end
     end
 

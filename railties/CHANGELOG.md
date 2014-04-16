@@ -1,3 +1,29 @@
+*   Do not set the Rails environment to test by default when using test_unit Railtie.
+
+    *Konstantin Shabanov*
+
+*   Remove sqlite3 lines from `.gitignore` if the application is not using sqlite3.
+
+    *Dmitrii Golub*
+
+*   Add public API to register new extensions for `rake notes`.
+
+    Example:
+
+        config.annotations.register_extensions("scss", "sass") { |tag| /\/\/\s*(#{tag}):?\s*(.*)$/ }
+
+    *Roberto Miranda*
+
+*   Removed unnecessary `rails application` command.
+
+    *Arun Agrawal*
+
+*   Make the `rails:template` rake task load the application's initializers.
+
+    Fixes #12133.
+
+    *Robin Dupret*
+
 *   Introduce `Rails.gem_version` as a convenience method to return
     `Gem::Version.new(Rails.version)`, suggesting a more reliable way to perform
     version comparison.

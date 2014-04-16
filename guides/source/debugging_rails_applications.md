@@ -123,7 +123,7 @@ config.logger = Logger.new(STDOUT)
 config.logger = Log4r::Logger.new("Application Log")
 ```
 
-TIP: By default, each log is created under `Rails.root/log/` and the log file name is `environment_name.log`.
+TIP: By default, each log is created under `Rails.root/log/` and the log file is named after the environment in which the application is running.
 
 ### Log Levels
 
@@ -198,9 +198,7 @@ Adding extra logging like this makes it easy to search for unexpected or unusual
 
 ### Tagged Logging
 
-When running multi-user, multi-account applications, it's often useful
-to be able to filter the logs using some custom rules. `TaggedLogging`
-in Active Support helps in doing exactly that by stamping log lines with subdomains, request ids, and anything else to aid debugging such applications.
+When running multi-user, multi-account applications, it's often useful to be able to filter the logs using some custom rules. `TaggedLogging` in Active Support helps in doing exactly that by stamping log lines with subdomains, request ids, and anything else to aid debugging such applications.
 
 ```ruby
 logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
@@ -210,35 +208,23 @@ logger.tagged("BCX") { logger.tagged("Jason") { logger.info "Stuff" } } # Logs "
 ```
 
 ### Impact of Logs on Performance
-Logging will always have a small impact on performance of your rails app, 
-        particularly when logging to disk.However, there are a few subtleties:
+Logging will always have a small impact on performance of your rails app, particularly when logging to disk.However, there are a few subtleties:
 
-Using the `:debug` level will have a greater performance penalty than `:fatal`,
-      as a far greater number of strings are being evaluated and written to the
-      log output (e.g. disk).
+Using the `:debug` level will have a greater performance penalty than `:fatal`, as a far greater number of strings are being evaluated and written to the log output (e.g. disk).
 
-Another potential pitfall is that if you have many calls to `Logger` like this
-      in your code:
+Another potential pitfall is that if you have many calls to `Logger` like this in your code:
 
 ```ruby
 logger.debug "Person attributes hash: #{@person.attributes.inspect}"
 ```
 
-In the above example, There will be a performance impact even if the allowed 
-output level doesn't include debug. The reason is that Ruby has to evaluate 
-these strings, which includes instantiating the somewhat heavy `String` object 
-and interpolating the variables, and which takes time.
-Therefore, it's recommended to pass blocks to the logger methods, as these are 
-only evaluated if the output level is the same or included in the allowed level 
-(i.e. lazy loading). The same code rewritten would be:
+In the above example, There will be a performance impact even if the allowed  output level doesn't include debug. The reason is that Ruby has to evaluate these strings, which includes instantiating the somewhat heavy `String` object and interpolating the variables, and which takes time. Therefore, it's recommended to pass blocks to the logger methods, as these are  only evaluated if the output level is the same or included in the allowed level (i.e. lazy loading). The same code rewritten would be:
 
 ```ruby
 logger.debug {"Person attributes hash: #{@person.attributes.inspect}"}
 ```
 
-The contents of the block, and therefore the string interpolation, is only 
-evaluated if debug is enabled. This performance savings is only really 
-noticeable with large amounts of logging, but it's a good practice to employ.
+The contents of the block, and therefore the string interpolation, is only  evaluated if debug is enabled. This performance savings is only really noticeable with large amounts of logging, but it's a good practice to employ.
 
 Debugging with the `debugger` gem
 ---------------------------------

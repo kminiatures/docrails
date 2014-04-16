@@ -215,6 +215,8 @@ module ActiveRecord
           # Character types
           when /^(?:character varying|bpchar)(?:\(\d+\))?$/
             :string
+          when /^citext(?:\(\d+\))?$/
+            :citext
           # Binary data types
           when 'bytea'
             :binary
@@ -353,6 +355,10 @@ module ActiveRecord
         def json(name, options = {})
           column(name, 'json', options)
         end
+
+        def citext(name, options = {})
+          column(name, 'citext', options)
+        end
       end
 
       class TableDefinition < ActiveRecord::ConnectionAdapters::TableDefinition
@@ -391,6 +397,10 @@ module ActiveRecord
           options[:default] = options.fetch(:default, 'uuid_generate_v4()')
           options[:primary_key] = true
           column name, type, options
+        end
+
+        def citext(name, options = {})
+          column(name, 'citext', options)
         end
 
         def column(name, type = nil, options = {})
@@ -441,7 +451,8 @@ module ActiveRecord
         macaddr:     { name: "macaddr" },
         uuid:        { name: "uuid" },
         json:        { name: "json" },
-        ltree:       { name: "ltree" }
+        ltree:       { name: "ltree" },
+        citext:      { name: "citext" }
       }
 
       include Quoting
@@ -592,10 +603,6 @@ module ActiveRecord
         false
       end
 
-      def active_threadsafe?
-        @connection.connect_poll != PG::PGRES_POLLING_FAILED
-      end
-
       # Close then reopen the connection.
       def reconnect!
         super
@@ -605,7 +612,12 @@ module ActiveRecord
 
       def reset!
         clear_cache!
-        super
+        reset_transaction
+        unless @connection.transaction_status == ::PG::PQTRANS_IDLE
+          @connection.query 'ROLLBACK'
+        end
+        @connection.query 'DISCARD ALL'
+        configure_connection
       end
 
       # Disconnects from the database if already connected. Otherwise, this

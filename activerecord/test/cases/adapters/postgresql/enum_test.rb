@@ -8,7 +8,7 @@ class PostgresqlEnumTest < ActiveRecord::TestCase
     self.table_name = "postgresql_enums"
   end
 
-  def teardown
+  teardown do
     @connection.execute 'DROP TABLE IF EXISTS postgresql_enums'
     @connection.execute 'DROP TYPE IF EXISTS mood'
   end
@@ -25,6 +25,17 @@ class PostgresqlEnumTest < ActiveRecord::TestCase
     end
     # reload type map after creating the enum type
     @connection.send(:reload_type_map)
+  end
+
+  def test_column
+    column = PostgresqlEnum.columns_hash["current_mood"]
+    # TODO: enum columns should be of type enum or string, not nil.
+    assert_nil column.type
+    assert_equal "mood", column.sql_type
+    assert_not column.number?
+    assert_not column.text?
+    assert_not column.binary?
+    assert_not column.array
   end
 
   def test_enum_mapping

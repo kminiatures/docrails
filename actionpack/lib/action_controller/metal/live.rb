@@ -125,9 +125,11 @@ module ActionController
       end
 
       def each
+        @response.sending!
         while str = @buf.pop
           yield str
         end
+        @response.sent!
       end
 
       def close
@@ -177,12 +179,20 @@ module ActionController
         end
       end
 
-      def commit!
-        headers.freeze
+      private
+
+      def before_committed
         super
+        jar = request.cookie_jar
+        # The response can be committed multiple times
+        jar.write self unless committed?
       end
 
-      private
+      def before_sending
+        super
+        request.cookie_jar.commit!
+        headers.freeze
+      end
 
       def build_buffer(response, body)
         buf = Live::Buffer.new response
@@ -218,17 +228,18 @@ module ActionController
         begin
           super(name)
         rescue => e
-          unless @_response.committed?
+          if @_response.committed?
+            begin
+              @_response.stream.write(ActionView::Base.streaming_completion_on_exception) if request.format == :html
+              @_response.stream.call_on_error
+            rescue => exception
+              log_error(exception)
+            ensure
+              log_error(e)
+              @_response.stream.close
+            end
+          else
             error = e
-          end
-          begin
-            @_response.stream.write(ActionView::Base.streaming_completion_on_exception) if request.format == :html
-            @_response.stream.call_on_error
-          rescue => exception
-            log_error(exception)
-          ensure
-            log_error(e)
-            @_response.stream.close
           end
         ensure
           @_response.commit!
