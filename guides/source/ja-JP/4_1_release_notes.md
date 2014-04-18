@@ -9,7 +9,7 @@ Rails 4.1の注目ポイント
 * Action Packのバリアント
 * Action Mailerプレビュー
 
-本リリースノートでは、主要な変更についてのみ説明します。細かなバグ修正や変更については、change logを参照するか、Githubの主要なRailsリポジトリにある[コミットリスト](https://github.com/rails/rails/commits/master) をさんしょうしてください
+本リリースノートでは、主要な変更についてのみ説明します。細かなバグ修正や変更については、change logを参照するか、Githubの主要なRailsリポジトリにある[コミットリスト](https://github.com/rails/rails/commits/master) を参照してください
 
 --------------------------------------------------------------------------------
 
