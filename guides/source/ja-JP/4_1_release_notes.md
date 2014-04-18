@@ -68,13 +68,13 @@ development:
   some_api_key: SOMEKEY
 ```
 
-上の設定にすると、development環境で`Rails.application.secrets.some_api_key`をじっこうすると`SOMEKEY`が返されます。
+上の設定にした場合、development環境で`Rails.application.secrets.some_api_key`を実行すると`SOMEKEY`が返されます。
 
 既存のアプリケーションにこの機能を統合する方法については[Ruby on Railsアップグレードガイド](upgrading_ruby_on_rails.html#config-secrets-yml)を参照してください。
 
 ### Action Pack Variant
 
-We often want to render different HTML/JSON/XML templates for phones, tablets, and desktop browsers. Variantを使用することで簡単に実現できます。
+スマートフォン、タブレット、デスクトップブラウザごとに異なるHTML/JSON/XMLテンプレートを使いたいことはよくあります。Variantを使用することで、これを簡単に実現できます。
 
 リクエストvariantは、`:tablet`、`:phone`、`:desktop`のようなリクエストフォーマットを特殊化したものです。
 
@@ -233,7 +233,7 @@ Railties
 
 * デフォルトで生成されるテストヘルパーでrequireされる`test_help.rb`ファイルは、`db/schema.rb` (または `db/structure.sql`) を使用して自動的にテストデータベースを最新の状態に保ちます。スキーマを再度読み込んでもペンディング中のマイグレーションをすべて解決できなかった場合はエラーが発生します。`config.active_record.maintain_test_schema = false`を指定することでエラーを回避できます。([Pull Request](https://github.com/rails/rails/pull/13528))
 
-* `Gem::Version.new(Rails.version)`を返す便利なメソッドとして`Rails.gem_version`が導入されました。より信頼できるバージョン比較法を提供します。 as a convenience method to return , suggesting a more reliable way to perform version comparison. ([Pull Request](https://github.com/rails/rails/pull/14103))
+* `Gem::Version.new(Rails.version)`を返す便利なメソッドとして`Rails.gem_version`が導入されました。より信頼できるバージョン比較法を提供します。([Pull Request](https://github.com/rails/rails/pull/14103))
 
 
 ### Action Pack
