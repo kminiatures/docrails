@@ -62,8 +62,8 @@ Rails 4.1 generates a new `secrets.yml` file in the `config` folder. デフォ�
 このファイルに保存された秘密キーは`Rails.application.secrets`を使用してアクセスできます。
 たとえば、以下の`config/secrets.yml`について見てみましょう。
 
-    ```yaml
-    development:
+```yaml
+development:
   secret_key_base: 3b7cd727ee24e8444053437c36cc66c3
   some_api_key: SOMEKEY
 ```
@@ -87,7 +87,7 @@ request.variant = :tablet if request.user_agent =~ /iPad/
 アクションの側では、フォーマットへの応答と同じ要領でvariantに応答します。
 
 ```ruby
-  respond_to do |format|
+respond_to do |format|
   format.html do |html|
     html.tablet # renders app/views/projects/show.html+tablet.erb
     html.phone { extra_setup; render ... }
@@ -106,7 +106,7 @@ app/views/projects/show.html+phone.erb
 以下のようなインライン文法を使用することで、variant定義を簡略化することもできます。
 
 ```ruby
-  respond_to do |format|
+respond_to do |format|
   format.js         { render "trash" }
   format.html.phone { redirect_to progress_path }
   format.html.none  { render "trash" }
@@ -141,7 +141,7 @@ end
 ```ruby
 class Conversation < ActiveRecord::Base
   enum status: [ :active, :archived ]
-  end
+end
 
 conversation.archived!
 conversation.active? # => false
@@ -156,7 +156,7 @@ Conversation.statuses # => { "active" => 0, "archived" => 1 }
 
 ### メッセージベリファイア
 
-Message verifiers can be used to generate and verify signed messages. この機能は、「パスワードを保存 (remember me)」トークンや友人リストのような機密データを安全に転送するときに便利です。
+メッセージベリファイア (message verifier) は、署名付きメッセージの生成と照合に使用できます。この機能は、「パスワードを保存 (remember me)」トークンや友人リストのような機密データを安全に転送するときに便利です。
 
 `Rails.application.message_verifier`メソッドは、 secret_key_baseを使用して生成されたキーで署名された新しいメッセージベリファイアと、与えられたメッセージ照合名を返します。
 
