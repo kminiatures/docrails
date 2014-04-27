@@ -1,55 +1,54 @@
-﻿
-Active Recordの基礎
+Active Record Basics
 ====================
 
-このガイドではActive Recordの基礎について説明します。
+This guide is an introduction to Active Record.
 
-このガイドの内容:
+After reading this guide, you will know:
 
-* オブジェクトリレーションマッピング(ORM)とActive Recordについて、およびRailsでの利用方法
-* Active RecordとMVC (Model-View-Controller)パラダイムの親和性
-* Active Recordモデルを使用してリレーショナルデータベースに保存されたデータを操作する
-* Active Recordスキーマにおける名前付けルール
-* データベースのマイグレーション、検証(validation)、コールバック
+* What Object Relational Mapping and Active Record are and how they are used in Rails.
+* How Active Record fits into the Model-View-Controller paradigm.
+* How to use Active Record models to manipulate data stored in a relational database.
+* Active Record schema naming conventions.
+* The concepts of database migrations, validations and callbacks.
 
 --------------------------------------------------------------------------------
 
-Active Recordについて
+What is Active Record?
 ----------------------
 
-Active Recordとは、[MVC](getting_started.html#the-mvc-architecture)で言うところのM、つまりモデルに相当するものであり、ビジネスデータとビジネスロジックを表すシステムの階層です。Active Recordは、データベースに恒久的に保存される必要のあるビジネスオブジェクトの作成と利用を円滑に行なえるようにします。Active Recordは、オブジェクトリレーションマッピング(ORM: Object Relation Mapping)システムに記述されている「Active Recordパターン」を実装したものであり、同じ名前が付けられています。
+Active Record is the M in [MVC](getting_started.html#the-mvc-architecture) - the model - which is the layer of the system responsible for representing business data and logic. Active Record facilitates the creation and use of business objects whose data requires persistent storage to a database. It is an implementation of the Active Record pattern which itself is a description of an Object Relational Mapping system.
 
-### Active Recordパターン
+### The Active Record Pattern
 
-[Active RecordはMartin Fowlerによって](http://www.martinfowler.com/eaaCatalog/activeRecord.html) _Patterns of Enterprise Application Architecture_ という書籍で記述されました。Active Recordにおいて、オブジェクトとは永続的なデータであり、そのデータに対する振る舞いでもあります。Active Recordでは、データアクセスのロジックを確実なものにすることは、そのオブジェクトの利用者にデータベースへの読み書き方法を教育することの一部である、という意見を採用しています。
+[Active Record was described by Martin Fowler](http://www.martinfowler.com/eaaCatalog/activeRecord.html) in his book _Patterns of Enterprise Application Architecture_. In Active Record, objects carry both persistent data and behavior which operates on that data. Active Record takes the opinion that ensuring data access logic is part of the object will educate users of that object on how to write to and read from the database.
 
-### O/Rマッピング
+### Object Relational Mapping
 
-オブジェクトリレーションマッピング(O/RマッピングやORMと略されることもあります)とは、アプリケーションが持つリッチなオブジェクトをリレーショナルデータベース(RDBMS)のテーブルに接続するものです。ORMを使用することで、SQL文を直接書く代りにわずかなアクセスコードを書くだけで、アプリケーションにおけるオブジェクトの属性やリレーションシップをデータベースに保存したりデータベースから読み出したりすることができるようになります。
+Object-Relational Mapping, commonly referred to as its abbreviation ORM, is a technique that connects the rich objects of an application to tables in a relational database management system. Using ORM, the properties and relationships of the objects in an application can be easily stored and retrieved from a database without writing SQL statements directly and with less overall database access code.
 
-### ORMフレームワークとしてのActive Record
+### Active Record as an ORM Framework
 
-Active Recordにはさまざまな機能が搭載されており、その中でも以下のものが特に重要です。
+Active Record gives us several mechanisms, the most important being the ability to:
 
-* モデルおよびモデル内のデータを表現する
-* モデル間の関連付け(アソシエーション)を表現する
-* 関連するモデルを介した継承階層を表現する
-* データがデータベースに永続的に保存される前に検証(validation)を行なう
-* オブジェクト指向の表記方法でデータベースを操作する
+* Represent models and their data.
+* Represent associations between these models.
+* Represent inheritance hierarchies through related models.
+* Validate models before they get persisted to the database.
+* Perform database operations in an object-oriented fashion.
 
-Active RecordにおけるCoC(Convention over Configuration)
+Convention over Configuration in Active Record
 ----------------------------------------------
 
-他のプログラミング言語やフレームワークを使用してアプリケーションを作成すると、設定のためのコードを大量に書く必要が生じがちです。一般的なORMアプリケーションでは特にこの傾向があります。しかし、Railsに適合するルールに従っていれば、Active Recordモデルを作成するときに、設定のために書かなければならないコードは最小限で済みます。場合によっては設定のためのコードが完全に不要であることすらあります。これは、アプリケーションの設定がほとんどの場合で同じならば、それをデフォルトにすべきであるという考えに基づいています。つまり、明示的な設定が必要となるのは標準のルールだけでは不足がある場合のみということです。
+When writing applications using other programming languages or frameworks, it may be necessary to write a lot of configuration code. This is particularly true for ORM frameworks in general. However, if you follow the conventions adopted by Rails, you'll need to write very little configuration (in some case no configuration at all) when creating Active Record models. The idea is that if you configure your applications in the very same way most of the time then this should be the default way. Thus, explicit configuration would be needed only in those cases where you can't follow the standard convention.
 
-### 命名ルール
+### Naming Conventions
 
-Active Recordには、モデルとデータベースのテーブルとのマッピング作成時に従うべきルールがいくつかあります。Railsでは、データベースのテーブル名を見つけるときに、モデルのクラス名を複数形にしたものを使用します。つまり、`Book`というモデルクラスがある場合、これに対応するデータベースのテーブルは複数形の**books**になります。Railsの複数形化メカニズムは非常に強力で、不規則な語であっても複数形にしたり単数形にしたりできます(person <-> peopleなど)。モデルのクラス名が2語以上の複合語である場合、Rubyの慣習であるキャメルケース(CamelCaseのように語頭を大文字にしてスペースなしでつなぐ)に従ってください。一方、テーブル名は(camel_caseなどのように)小文字かつアンダースコアで区切られなければなりません。以下の例を参照ください。
+By default, Active Record uses some naming conventions to find out how the mapping between models and database tables should be created. Rails will pluralize your class names to find the respective database table. So, for a class `Book`, you should have a database table called **books**. The Rails pluralization mechanisms are very powerful, being capable to pluralize (and singularize) both regular and irregular words. When using class names composed of two or more words, the model class name should follow the Ruby conventions, using the CamelCase form, while the table name must contain the words separated by underscores. Examples:
 
-* データベースのテーブル - 複数形であり、語はアンダースコアで区切られる (例: `book_clubs`)
-* モデルのクラス - 単数形であり、語頭を大文字にする (例: `BookClub`)
+* Database Table - Plural with underscores separating words (e.g., `book_clubs`).
+* Model Class - Singular with the first letter of each word capitalized (e.g., `BookClub`).
 
-| モデル / クラス | テーブル / スキーマ |
+| Model / Class | Table / Schema |
 | ------------- | -------------- |
 | `Post`        | `posts`        |
 | `LineItem`    | `line_items`   |
@@ -58,36 +57,36 @@ Active Recordには、モデルとデータベースのテーブルとのマッ�
 | `Person`      | `people`       |
 
 
-### スキーマのルール
+### Schema Conventions
 
-Active Recordでは、データベースのテーブルで使用されるカラムの名前についても、利用目的に応じてルールがあります。
+Active Record uses naming conventions for the columns in database tables, depending on the purpose of these columns.
 
-* **外部キー** - このカラムは `テーブル名の単数形_id` にする必要があります (例 `item_id`、`order_id`)これらのカラムは、Active Recordがモデル間の関連付けを作成するときに参照されます。
+* **Foreign keys** - These fields should be named following the pattern `singularized_table_name_id` (e.g., `item_id`, `order_id`). These are the fields that Active Record will look for when you create associations between your models.
 
-* **主キー** - デフォルトでは `id` という名前を持つintegerのカラムをテーブルの主キーとして使用します。このカラムは、[Active Recordマイグレーション](migrations.html)を使用してテーブルを作成するときに自動的に作成されます。
+* **Primary keys** - By default, Active Record will use an integer column named `id` as the table's primary key. When using [Active Record Migrations](migrations.html) to create your tables, this column will be automatically created.
 
-他にも、Active Recordインスタンスに機能を追加するカラム名がいくつかあります。
+There are also some optional column names that will add additional features to Active Record instances:
 
-* `created_at` - レコードが作成された時に現在の日付時刻が自動的に設定されます
-* `updated_at` - レコードが更新されたときに現在の日付時刻が自動的に設定されます
-* `lock_version` - モデルに[optimistic locking](http://api.rubyonrails.org/classes/ActiveRecord/Locking.html)を追加します
-* `type` - モデルで[Single Table Inheritance](http://api.rubyonrails.org/classes/ActiveRecord/Base.html#label-Single+table+inheritance)を使用する場合に指定します
-* `関連付け名_type` - [ポリモーフィック関連付け](association_basics.html#polymorphic-associations)の種類を保存します
-* `テーブル名_count` - 関連付けにおいて、所属しているオブジェクトの数をキャッシュするのに使用されます。たとえば、`Post`クラスに`comments_count`というカラムがあり、そこに`Comment`のインスタンスが多数あると、ポストごとのコメント数がここにキャッシュされます。
+* `created_at` - Automatically gets set to the current date and time when the record is first created.
+* `updated_at` - Automatically gets set to the current date and time whenever the record is updated.
+* `lock_version` - Adds [optimistic locking](http://api.rubyonrails.org/classes/ActiveRecord/Locking.html) to a model.
+* `type` - Specifies that the model uses [Single Table Inheritance](http://api.rubyonrails.org/classes/ActiveRecord/Base.html#label-Single+table+inheritance).
+* `(association_name)_type` - Stores the type for [polymorphic associations](association_basics.html#polymorphic-associations).
+* `(table_name)_count` - Used to cache the number of belonging objects on associations. For example, a `comments_count` column in a `Post` class that has many instances of `Comment` will cache the number of existent comments for each post.
 
-メモ: これらのカラム名は必須ではありませんが、Active Recordに予約されています。特殊なことをするのでなければ、これらの予約済みカラム名の使用は避けてください。たとえば、`type`という語はテーブルでSingle Table Inheritance (STI)を指定するために予約されています。STIを使用しないとしても、予約語より先にまず"context"などのような、モデルのデータを適切に表す語を検討してください。
+NOTE: While these column names are optional, they are in fact reserved by Active Record. Steer clear of reserved keywords unless you want the extra functionality. For example, `type` is a reserved keyword used to designate a table using Single Table Inheritance (STI). If you are not using STI, try an analogous keyword like "context", that may still accurately describe the data you are modeling.
 
-Active Recordのモデルを作成する
+Creating Active Record Models
 -----------------------------
 
-Active Recordモデルの作成は非常に簡単です。以下のように`ActiveRecord::Base`クラスのサブクラスを作成するだけで完了します。
+It is very easy to create Active Record models. All you have to do is to subclass the `ActiveRecord::Base` class and you're good to go:
 
 ```ruby
 class Product < ActiveRecord::Base
 end
 ```
 
-上のコードは、`Product`モデルを作成し、データベースの`products`テーブルにマッピングされます。さらに、テーブルに含まれている各行のカラムを、作成したモデルのインスタンスの属性にマッピングします。以下のSQL文で`products`テーブルを作成したとします。
+This will create a `Product` model, mapped to a `products` table at the database. By doing this you'll also have the ability to map the columns of each row in that table with the attributes of the instances of your model. Suppose that the `products` table was created using an SQL sentence like:
 
 ```sql
 CREATE TABLE products (
@@ -97,7 +96,7 @@ CREATE TABLE products (
 );
 ```
 
-上のテーブルスキーマに従って、以下のようなコードをいきなり書くことができます。
+Following the table schema above, you would be able to write code like the following:
 
 ```ruby
 p = Product.new
@@ -105,12 +104,12 @@ p.name = "Some Book"
 puts p.name # "Some Book"
 ```
 
-命名ルールを上書きする
+Overriding the Naming Conventions
 ---------------------------------
 
-Railsアプリケーションで別の命名ルールを使用しなければならない、レガシデータベースを使用してRailsアプリケーションを作成しないといけないなどの場合にはどうすればよいでしょうか。そんなときにはデフォルトの命名ルールを簡単にオーバーライドできます。
+What if you need to follow a different naming convention or need to use your Rails application with a legacy database? No problem, you can easily override the default conventions.
 
-`ActiveRecord::Base.table_name=`メソッドを使用して、使用すべきテーブル名を明示的に指定できます。
+You can use the `ActiveRecord::Base.table_name=` method to specify the table name that should be used:
 
 ```ruby
 class Product < ActiveRecord::Base
@@ -118,7 +117,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-この指定を行った場合、テストの定義で`set_fixture_class`メソッドを使用し、フィクスチャ (クラス名.yml) に対応するクラス名を別途定義する必要があります。
+If you do so, you will have to define manually the class name that is hosting the fixtures (class_name.yml) using the `set_fixture_class` method in your test definition:
 
 ```ruby
 class FunnyJoke < ActiveSupport::TestCase
@@ -128,7 +127,7 @@ class FunnyJoke < ActiveSupport::TestCase
 end
 ```
 
-`ActiveRecord::Base.primary_key=`メソッドを使用して、テーブルの主キーとして使用されるカラム名もオーバーライドできます。
+It's also possible to override the column that should be used as the table's primary key using the `ActiveRecord::Base.primary_key=` method:
 
 ```ruby
 class Product < ActiveRecord::Base
@@ -136,22 +135,22 @@ class Product < ActiveRecord::Base
 end
 ```
 
-CRUD: データの読み書き
+CRUD: Reading and Writing Data
 ------------------------------
 
-CRUDとは、4つのデータベース操作を表す**C**reate、**R**ead、**U**pdate、**D**eleteの頭字語です。Active Recordはこれらのメソッドを自動的に作成し、これによってアプリケーションはテーブルに保存されているデータを操作することができます。
+CRUD is an acronym for the four verbs we use to operate on data: **C**reate, **R**ead, **U**pdate and **D**elete. Active Record automatically creates methods to allow an application to read and manipulate data stored within its tables.
 
 ### Create
 
-Active Recordのオブジェクトはハッシュやブロックから作成することができます。また、作成後に属性を手動で追加できます。`new`メソッドを実行すると単に新しいオブジェクトが返されますが、`create`を実行すると新しいオブジェクトが返され、さらにデータベースに保存されます。
+Active Record objects can be created from a hash, a block or have their attributes manually set after creation. The `new` method will return a new object while `create` will return the object and save it to the database.
 
-たとえば、`User`というモデルに`name`と`occupation`という属性があるとすると、`create`メソッドを実行すると新しいレコードが1つ作成され、データベースに保存されます。
+For example, given a model `User` with attributes of `name` and `occupation`, the `create` method call will create and save a new record into the database:
 
 ```ruby
 user = User.create(name: "David", occupation: "Code Artist")
 ```
 
-`new`メソッドを使用した場合は、オブジェクトは保存されずにインスタンス化されます。
+Using the `new` method, an object can be instantiated without being saved:
 
 ```ruby
 user = User.new
@@ -159,9 +158,9 @@ user.name = "David"
 user.occupation = "Code Artist"
 ```
 
-この場合、`user.save`を実行して初めてデータベースにレコードがコミットされます。
+A call to `user.save` will commit the record to the database.
 
-最後に、`create`や`new`にブロックが渡されると、新しいオブジェクトは初期化のためにブロックに渡されます。
+Finally, if a block is provided, both `create` and `new` will yield the new object to that block for initialization:
 
 ```ruby
 user = User.new do |u|
@@ -172,33 +171,33 @@ end
 
 ### Read
 
-Active Recordは、データベース内のデータにアクセスするためのリッチなAPIを提供します。以下は、Active Recordによって提供されるさまざまなデータアクセスメソッドのほんの一例です。
+Active Record provides a rich API for accessing data within a database. Below are a few examples of different data access methods provided by Active Record.
 
 ```ruby
-# すべてのユーザーのコレクションを返す
+# return a collection with all users
 users = User.all
 ```
 
 ```ruby
-# 最初のユーザーを返す
+# return the first user
 user = User.first
 ```
 
 ```ruby
-# Davidという名前を持つ最初のユーザーを返す
+# return the first user named David
 david = User.find_by(name: 'David')
 ```
 
 ```ruby
-# 名前がDavidで、職業がコードアーティストのユーザーをすべて返し、created_atカラムで逆順ソートする
+# find all users named David who are Code Artists and sort by created_at in reverse chronological order
 users = User.where(name: 'David', occupation: 'Code Artist').order('created_at DESC')
 ```
 
-Active Recordモデルへのクエリについては[Active Recordクエリインターフェイス](active_record_querying.html)ガイドで詳細を説明します。
+You can learn more about querying an Active Record model in the [Active Record Query Interface](active_record_querying.html) guide.
 
 ### Update
 
-Active Recordオブジェクトをひとたび取得すると、オブジェクトの属性を変更してデータベースの保存できるようになります。
+Once an Active Record object has been retrieved, its attributes can be modified and it can be saved to the database.
 
 ```ruby
 user = User.find_by(name: 'David')
@@ -206,14 +205,14 @@ user.name = 'Dave'
 user.save
 ```
 
-上のコードをもっと短くするのであれば、属性名と、設定したい値をマッピングするハッシュを使用して次のように書きます。
+A shorthand for this is to use a hash mapping attribute names to the desired value, like so:
 
 ```ruby
 user = User.find_by(name: 'David')
 user.update(name: 'Dave')
 ```
 
-これは多くの属性を一度に更新したい場合に特に便利です。さらに、複数のレコードを一度に更新したいのであれば、`update_all`というクラスメソッドが便利です。
+This is most useful when updating several attributes at once. If, on the other hand, you'd like to update several records in bulk, you may find the `update_all` class method useful:
 
 ```ruby
 User.update_all "max_login_attempts = 3, must_change_password = 'true'"
@@ -221,20 +220,20 @@ User.update_all "max_login_attempts = 3, must_change_password = 'true'"
 
 ### Delete
 
-他のメソッドと同様、Active Recordオブジェクトをひとたび取得すれば、そのオブジェクトをdestroyすることでデータベースから削除できます。
+Likewise, once retrieved an Active Record object can be destroyed which removes it from the database.
 
 ```ruby
 user = User.find_by(name: 'David')
 user.destroy
 ```
 
-検証(validation)
+Validations
 -----------
 
-Active Recordを使用して、モデルがデータベースに書き込まれる前にモデルの状態を検証することができます。モデルをチェックするためのさまざまなメソッドが用意されています。属性が空でないこと、一意であること、既にデータベースにないこと、特定のフォーマットに従っていることなど、多岐にわたった検証が行えます。
+Active Record allows you to validate the state of a model before it gets written into the database. There are several methods that you can use to check your models and validate that an attribute value is not empty, is unique and not already in the database, follows a specific format and many more.
 
-検証は、データベースを永続化するうえで極めて重要です。そのため、`create`、`save`、`update`メソッドは、検証に失敗した場合に`false`を返します。このとき実際のデータベース操作は行われません。上の3つのメソッドにはそれぞれ破壊的なバージョン (`create!`、`save!`、`update!`)があり、こちらは検証に失敗した場合にさらに厳しい対応、つまり`ActiveRecord::RecordInvalid`例外を発生します。
-以下の例で簡単に説明します。
+Validation is a very important issue to consider when persisting to database, so the methods `create`, `save` and `update` take it into account when running: they return `false` when validation fails and they didn't actually perform any operation on database. All of these have a bang counterpart (that is, `create!`, `save!` and `update!`), which are stricter in that they raise the exception `ActiveRecord::RecordInvalid` if validation fails.
+A quick example to illustrate:
 
 ```ruby
 class User < ActiveRecord::Base
@@ -245,17 +244,17 @@ User.create  # => false
 User.create! # => ActiveRecord::RecordInvalid: Validation failed: Name can't be blank
 ```
 
-検証の詳細については[Active Record検証ガイド](active_record_validations.html)を参照してください。
+You can learn more about validations in the [Active Record Validations guide](active_record_validations.html).
 
-コールバック
+Callbacks
 ---------
 
-Active Recordコールバックを使用することで、モデルのライフサイクルにおける特定のイベント実行時にコードをアタッチして実行することができます。これにより、モデルで特定のイベントが発生したときにコードが透過的に実行されるようになります。レコードの作成、更新、削除などさまざまなイベントに対してコールバックを設定できます。コールバックの詳細については[Active Recordコールバックガイド](active_record_callbacks.html)を参照してください。
+Active Record callbacks allow you to attach code to certain events in the life-cycle of your models. This enables you to add behavior to your models by transparently executing code when those events occur, like when you create a new record, update it, destroy it and so on. You can learn more about callbacks in the [Active Record Callbacks guide](active_record_callbacks.html).
 
-マイグレーション
+Migrations
 ----------
 
-Railsにはデータベーススキーマを管理するためのドメイン固有言語(DSL: Domain Specific Language)があり、マイグレーション(migration)と呼ばれています。マイグレーションはファイルに保存されます。`rake`を実行すると、Active Recordがサポートするあらゆるデータベースに対してマイグレーションが実行されます。以下はテーブルを作成するマイグレーションです。
+Rails provides a domain-specific language for managing a database schema called migrations. Migrations are stored in files which are executed against any database that Active Record supports using `rake`. Here's a migration that creates a table:
 
 ```ruby
 class CreatePublications < ActiveRecord::Migration
@@ -275,6 +274,6 @@ class CreatePublications < ActiveRecord::Migration
 end
 ```
 
-Railsはどのマイグレーションファイルがデータベースにコミットされたかを把握しており、その情報を使用してロールバック機能を提供しています。テーブルを実際に作成するには`rake db:migrate`を実行します。ロールバックするには`rake db:rollback`を実行します。
+Rails keeps track of which files have been committed to the database and provides rollback features. To actually create the table, you'd run `rake db:migrate` and to roll it back, `rake db:rollback`.
 
-上のマイグレーションコードはデータベースに依存していないことにご注目ください。MySQL、PostgreSQL、Oracleなど多くのデータベースに対して実行できます。マイグレーションの詳細については[Active Recordマイグレーションガイド](migrations.html)を参照してください。
+Note that the above code is database-agnostic: it will run in MySQL, PostgreSQL, Oracle and others. You can learn more about migrations in the [Active Record Migrations guide](migrations.html).
