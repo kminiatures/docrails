@@ -126,9 +126,7 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/4-0-stable/r
 
 * Threadsafe on by default
 
-* Ability to use a custom builder by passing `--builder` (or `-b`) to
-  `rails new` has been removed. Consider using application templates
-  instead. ([Pull Request](https://github.com/rails/rails/pull/9401))
+* Ability to use a custom builder by passing `--builder` (or `-b`) to `rails new` has been removed. Consider using application templates instead. ([Pull Request](https://github.com/rails/rails/pull/9401))
 
 ### Deprecations
 
@@ -173,8 +171,7 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/4-0-stable/a
 
 * `Object#try` will now return nil instead of raise a NoMethodError if the receiving object does not implement the method, but you can still get the old behavior by using the new `Object#try!`.
 
-* `String#to_date` now raises `ArgumentError: invalid date` instead of `NoMethodError: undefined method 'div' for nil:NilClass`
-  when given an invalid date. It is now the same as `Date.parse`, and it accepts more invalid dates than 3.x, such as:
+* `String#to_date` now raises `ArgumentError: invalid date` instead of `NoMethodError: undefined method 'div' for nil:NilClass` when given an invalid date. It is now the same as `Date.parse`, and it accepts more invalid dates than 3.x, such as:
 
   ```
   # ActiveSupport 3.x

@@ -54,9 +54,7 @@ use this style:
 If `return` is needed it is recommended to explicitly define a method.
 ```
 
-That said, when using pronouns in reference to a hypothetical person, such as "a
-user with a session cookie", gender neutral pronouns (they/their/them) should be
-used. Instead of:
+That said, when using pronouns in reference to a hypothetical person, such as "a user with a session cookie", gender neutral pronouns (they/their/them) should be used. Instead of:
 
 * he or she... use they.
 * him or her... use them.
@@ -133,15 +131,9 @@ Booleans
 
 In predicates and flags prefer documenting boolean semantics over exact values.
 
-When "true" or "false" are used as defined in Ruby use regular font. The
-singletons `true` and `false` need fixed-width font. Please avoid terms like
-"truthy", Ruby defines what is true and false in the language, and thus those
-words have a technical meaning and need no substitutes.
+When "true" or "false" are used as defined in Ruby use regular font. The singletons `true` and `false` need fixed-width font. Please avoid terms like "truthy", Ruby defines what is true and false in the language, and thus those words have a technical meaning and need no substitutes.
 
-As a rule of thumb, do not document singletons unless absolutely necessary. That
-prevents artificial constructs like `!!` or ternaries, allows refactors, and the
-code does not need to rely on the exact values returned by methods being called
-in the implementation.
+As a rule of thumb, do not document singletons unless absolutely necessary. That prevents artificial constructs like `!!` or ternaries, allows refactors, and the code does not need to rely on the exact values returned by methods being called in the implementation.
 
 For example:
 
@@ -149,8 +141,7 @@ For example:
 `config.action_mailer.perform_deliveries` specifies whether mail will actually be delivered and is true by default
 ```
 
-the user does not need to know which is the actual default value of the flag,
-and so we only document its boolean semantics.
+the user does not need to know which is the actual default value of the flag, and so we only document its boolean semantics.
 
 An example with a predicate:
 
@@ -172,8 +163,7 @@ def empty?
 end
 ```
 
-The API is careful not to commit to any particular value, the method has
-predicate semantics, that's enough.
+The API is careful not to commit to any particular value, the method has predicate semantics, that's enough.
 
 Filenames
 ---------
@@ -210,10 +200,7 @@ class Array
 end
 ```
 
-WARNING: Using `+...+` for fixed-width font only works with simple content like
-ordinary method names, symbols, paths (with forward slashes), etc. Please use
-`<tt>...</tt>` for everything else, notably class or module names with a
-namespace as in `<tt>ActiveRecord::Base</tt>`.
+WARNING: Using `+...+` for fixed-width font only works with simple content like ordinary method names, symbols, paths (with forward slashes), etc. Please use `<tt>...</tt>` for everything else, notably class or module names with a namespace as in `<tt>ActiveRecord::Base</tt>`.
 
 You can quickly test the RDoc output with the following command:
 

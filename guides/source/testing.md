@@ -337,12 +337,7 @@ Notice the 'E' in the output. It denotes a test with error.
 
 NOTE: The execution of each test method stops as soon as any error or an assertion failure is encountered, and the test suite continues with the next method. All test methods are executed in alphabetical order.
 
-When a test fails you are presented with the corresponding backtrace. By default
-Rails filters that backtrace and will only print lines relevant to your
-application. This eliminates the framework noise and helps to focus on your
-code. However there are situations when you want to see the full
-backtrace. simply set the `BACKTRACE` environment variable to enable this
-behavior:
+When a test fails you are presented with the corresponding backtrace. By default Rails filters that backtrace and will only print lines relevant to your application. This eliminates the framework noise and helps to focus on your code. However there are situations when you want to see the full backtrace. simply set the `BACKTRACE` environment variable to enable this behavior:
 
 ```bash
 $ BACKTRACE=1 rake test test/models/post_test.rb
@@ -547,9 +542,7 @@ end
 ```
 
 Note that you cannot test for template and layout at the same time, with one call to `assert_template` method.
-Also, for the `layout` test, you can give a regular expression instead of a string, but using the string, makes
-things clearer. On the other hand, you have to include the "layouts" directory name even if you save your layout
-file in this standard layout directory. Hence,
+Also, for the `layout` test, you can give a regular expression instead of a string, but using the string, makes things clearer. On the other hand, you have to include the "layouts" directory name even if you save your layout file in this standard layout directory. Hence,
 
 ```ruby
 assert_template layout: "application"
@@ -776,8 +769,7 @@ Rake Tasks for Running your Tests
 
 You don't need to set up and run your tests by hand on a test-by-test basis.
 Rails comes with a number of commands to help in testing.
-The table below lists all commands that come along in the default Rakefile
-when you initiate a Rails project.
+The table below lists all commands that come along in the default Rakefile when you initiate a Rails project.
 
 | Tasks                   | Description |
 | ----------------------- | ----------- |
@@ -796,8 +788,12 @@ when you initiate a Rails project.
 Brief Note About `MiniTest`
 -----------------------------
 
+<<<<<<< HEAD
 Ruby ships with a vast Standard Library for all common use-cases including testing. Ruby 1.8 provided `Test::Unit`, a framework for unit testing in Ruby. All the basic assertions discussed above are actually defined in `Test::Unit::Assertions`. The class `ActiveSupport::TestCase` which we have been using in our unit and functional tests extends `Test::Unit::TestCase`, allowing
 us to use all of the basic assertions in our tests.
+=======
+Ruby ships with a boat load of libraries. Ruby 1.8 provides `Test::Unit`, a framework for unit testing in Ruby. All the basic assertions discussed above are actually defined in `Test::Unit::Assertions`. The class `ActiveSupport::TestCase` which we have been using in our unit and functional tests extends `Test::Unit::TestCase`, allowing us to use all of the basic assertions in our tests.
+>>>>>>> 29dd63d037d602b0a349a6db8ac5d9461dfb0970
 
 Ruby 1.9 introduced `MiniTest`, an updated version of `Test::Unit` which provides a backwards compatible API for `Test::Unit`. You could also use `MiniTest` in Ruby 1.8 by installing the `minitest` gem.
 
@@ -954,10 +950,7 @@ class UserMailerTest < ActionMailer::TestCase
 end
 ```
 
-In the test we send the email and store the returned object in the `email`
-variable. We then ensure that it was sent (the first assert), then, in the
-second batch of assertions, we ensure that the email does indeed contain what we
-expect. The helper `read_fixture` is used to read in the content from this file.
+In the test we send the email and store the returned object in the `email` variable. We then ensure that it was sent (the first assert), then, in the second batch of assertions, we ensure that the email does indeed contain what we expect. The helper `read_fixture` is used to read in the content from this file.
 
 Here's the content of the `invite` fixture:
 
@@ -969,17 +962,9 @@ You have been invited.
 Cheers!
 ```
 
-This is the right time to understand a little more about writing tests for your
-mailers. The line `ActionMailer::Base.delivery_method = :test` in
-`config/environments/test.rb` sets the delivery method to test mode so that
-email will not actually be delivered (useful to avoid spamming your users while
-testing) but instead it will be appended to an array
-(`ActionMailer::Base.deliveries`).
+This is the right time to understand a little more about writing tests for your mailers. The line `ActionMailer::Base.delivery_method = :test` in `config/environments/test.rb` sets the delivery method to test mode so that email will not actually be delivered (useful to avoid spamming your users while testing) but instead it will be appended to an array (`ActionMailer::Base.deliveries`).
 
-NOTE: The `ActionMailer::Base.deliveries` array is only reset automatically in
-`ActionMailer::TestCase` tests. If you want to have a clean slate outside Action
-Mailer tests, you can reset it manually with:
-`ActionMailer::Base.deliveries.clear`
+NOTE: The `ActionMailer::Base.deliveries` array is only reset automatically in `ActionMailer::TestCase` tests. If you want to have a clean slate outside Action Mailer tests, you can reset it manually with: `ActionMailer::Base.deliveries.clear`
 
 ### Functional Testing
 
@@ -1005,10 +990,7 @@ end
 Testing helpers
 ---------------
 
-In order to test helpers, all you need to do is check that the output of the
-helper method matches what you'd expect. Tests related to the helpers are
-located under the `test/helpers` directory. Rails provides a generator which
-generates both the helper and the test file:
+In order to test helpers, all you need to do is check that the output of the helper method matches what you'd expect. Tests related to the helpers are located under the `test/helpers` directory. Rails provides a generator which generates both the helper and the test file:
 
 ```bash
 $ rails generate helper User
@@ -1026,9 +1008,7 @@ class UserHelperTest < ActionView::TestCase
 end
 ```
 
-A helper is just a simple module where you can define methods which are
-available into your views. To test the output of the helper's methods, you just
-have to use a mixin like this:
+A helper is just a simple module where you can define methods which are available into your views. To test the output of the helper's methods, you just have to use a mixin like this:
 
 ```ruby
 class UserHelperTest < ActionView::TestCase
@@ -1040,8 +1020,7 @@ class UserHelperTest < ActionView::TestCase
 end
 ```
 
-Moreover, since the test class extends from `ActionView::TestCase`, you have
-access to Rails' helper methods such as `link_to` or `pluralize`.
+Moreover, since the test class extends from `ActionView::TestCase`, you have access to Rails' helper methods such as `link_to` or `pluralize`.
 
 Other Testing Approaches
 ------------------------

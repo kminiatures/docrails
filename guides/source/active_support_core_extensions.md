@@ -718,8 +718,7 @@ NOTE: Defined in `active_support/core_ext/module/introspection.rb`.
 
 ### Constants
 
-The method `local_constants` returns the names of the constants that have been
-defined in the receiver module:
+The method `local_constants` returns the names of the constants that have been defined in the receiver module:
 
 ```ruby
 module X
@@ -741,13 +740,9 @@ NOTE: Defined in `active_support/core_ext/module/introspection.rb`.
 
 #### Qualified Constant Names
 
-The standard methods `const_defined?`, `const_get` , and `const_set` accept
-bare constant names. Active Support extends this API to be able to pass
-relative qualified constant names.
+The standard methods `const_defined?`, `const_get` , and `const_set` accept bare constant names. Active Support extends this API to be able to pass relative qualified constant names.
 
-The new methods are `qualified_const_defined?`, `qualified_const_get`, and
-`qualified_const_set`. Their arguments are assumed to be qualified constant
-names relative to their receiver:
+The new methods are `qualified_const_defined?`, `qualified_const_get`, and `qualified_const_set`. Their arguments are assumed to be qualified constant names relative to their receiver:
 
 ```ruby
 Object.qualified_const_defined?("Math::PI")       # => true
@@ -761,11 +756,8 @@ Arguments may be bare constant names:
 Math.qualified_const_get("E") # => 2.718281828459045
 ```
 
-These methods are analogous to their builtin counterparts. In particular,
-`qualified_constant_defined?` accepts an optional second argument to be
-able to say whether you want the predicate to look in the ancestors.
-This flag is taken into account for each constant in the expression while
-walking down the path.
+These methods are analogous to their builtin counterparts. In particular, `qualified_constant_defined?` accepts an optional second argument to be able to say whether you want the predicate to look in the ancestors.
+This flag is taken into account for each constant in the expression while walking down the path.
 
 For example, given
 
@@ -789,8 +781,7 @@ N.qualified_const_defined?("C::X", true)  # => true
 N.qualified_const_defined?("C::X")        # => true
 ```
 
-As the last example implies, the second argument defaults to true,
-as in `const_defined?`.
+As the last example implies, the second argument defaults to true, as in `const_defined?`.
 
 For coherence with the builtin methods only relative paths are accepted.
 Absolute qualified constant names like `::Math::PI` raise `NameError`.
@@ -1350,8 +1341,7 @@ end
 
 the user would see the usage message aligned against the left margin.
 
-Technically, it looks for the least indented line in the whole string, and removes
-that amount of leading whitespace.
+Technically, it looks for the least indented line in the whole string, and removes that amount of leading whitespace.
 
 NOTE: Defined in `active_support/core_ext/string/strip.rb`.
 
@@ -1891,8 +1881,7 @@ NOTE: Defined in `active_support/core_ext/numeric/bytes.rb`.
 
 Enables the use of time calculations and declarations, like `45.minutes + 2.hours + 4.years`.
 
-These methods use Time#advance for precise date calculations when using from_now, ago, etc.
-as well as adding or subtracting their results from a Time object. For example:
+These methods use Time#advance for precise date calculations when using from_now, ago, etc. as well as adding or subtracting their results from a Time object. For example:
 
 ```ruby
 # equivalent to Time.current.advance(months: 1)
@@ -1905,9 +1894,7 @@ as well as adding or subtracting their results from a Time object. For example:
 (4.months + 5.years).from_now
 ```
 
-While these methods provide precise calculation when used as in the examples above, care
-should be taken to note that this is not true if the result of `months', `years', etc is
-converted before use:
+While these methods provide precise calculation when used as in the examples above, care should be taken to note that this is not true if the result of `months', `years', etc is converted before use:
 
 ```ruby
 # equivalent to 30.days.to_i.from_now
@@ -1917,9 +1904,7 @@ converted before use:
 1.year.to_f.from_now
 ```
 
-In such cases, Ruby's core [Date](http://ruby-doc.org/stdlib/libdoc/date/rdoc/Date.html) and
-[Time](http://ruby-doc.org/stdlib/libdoc/time/rdoc/Time.html) should be used for precision
-date and time arithmetic.
+In such cases, Ruby's core [Date](http://ruby-doc.org/stdlib/libdoc/date/rdoc/Date.html) and [Time](http://ruby-doc.org/stdlib/libdoc/time/rdoc/Time.html) should be used for precision date and time arithmetic.
 
 NOTE: Defined in `active_support/core_ext/numeric/time.rb`.
 
@@ -2283,9 +2268,7 @@ NOTE: Defined in `active_support/core_ext/array/conversions.rb`.
 
 The method `to_formatted_s` acts like `to_s` by default.
 
-If the array contains items that respond to `id`, however, the symbol
-`:db` may be passed as argument. That's typically used with
-collections of Active Record objects. Returned strings are:
+If the array contains items that respond to `id`, however, the symbol `:db` may be passed as argument. That's typically used with collections of Active Record objects. Returned strings are:
 
 ```ruby
 [].to_formatted_s(:db)            # => "null"
@@ -2441,8 +2424,7 @@ NOTE: Defined in `active_support/core_ext/array/wrap.rb`.
 
 ### Duplicating
 
-The method `Array.deep_dup` duplicates itself and all objects inside
-recursively with Active Support method `Object#deep_dup`. It works like `Array#map` with sending `deep_dup` method to each object inside.
+The method `Array.deep_dup` duplicates itself and all objects inside recursively with Active Support method `Object#deep_dup`. It works like `Array#map` with sending `deep_dup` method to each object inside.
 
 ```ruby
 array = [1, [2, 3]]
@@ -3130,10 +3112,7 @@ Time.local(2000, 11, 31).next_quarter # => Wed, 28 Feb 2001
 
 ##### `beginning_of_week`, `end_of_week`
 
-The methods `beginning_of_week` and `end_of_week` return the dates for the
-beginning and end of the week, respectively. Weeks are assumed to start on
-Monday, but that can be changed passing an argument, setting thread local
-`Date.beginning_of_week` or `config.beginning_of_week`.
+The methods `beginning_of_week` and `end_of_week` return the dates for the beginning and end of the week, respectively. Weeks are assumed to start on Monday, but that can be changed passing an argument, setting thread local `Date.beginning_of_week` or `config.beginning_of_week`.
 
 ```ruby
 d = Date.new(2010, 5, 8)     # => Sat, 08 May 2010

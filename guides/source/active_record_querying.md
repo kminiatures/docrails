@@ -1274,16 +1274,14 @@ User.active.inactive
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'inactive'
 ```
 
-We can mix and match `scope` and `where` conditions and the final sql
-will have all conditions joined with `AND`.
+We can mix and match `scope` and `where` conditions and the final sql will have all conditions joined with `AND`.
 
 ```ruby
 User.active.where(state: 'finished')
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'active' AND "users"."state" = 'finished'
 ```
 
-If we do want the `last where clause` to win then `Relation#merge` can
-be used.
+If we do want the `last where clause` to win then `Relation#merge` can be used.
 
 ```ruby
 User.active.merge(User.inactive)
@@ -1310,14 +1308,41 @@ User.where(state: 'inactive')
 # SELECT "users".* FROM "users" WHERE "users"."state" = 'pending' AND "users"."state" = 'inactive'
 ```
 
-As you can see above the `default_scope` is being merged in both
-`scope` and `where` conditions.
+As you can see above the `default_scope` is being merged in both `scope` and `where` conditions.
 
+<<<<<<< HEAD
+=======
+
+### Applying a default scope
+
+If we wish for a scope to be applied across all queries to the model we can use the `default_scope` method within the model itself.
+
+```ruby
+class Client < ActiveRecord::Base
+  default_scope { where("removed_at IS NULL") }
+end
+```
+
+When queries are executed on this model, the SQL query will now look something like this:
+
+```sql
+SELECT * FROM clients WHERE removed_at IS NULL
+```
+
+If you need to do more complex things with a default scope, you can alternatively define it as a class method:
+
+```ruby
+class Client < ActiveRecord::Base
+  def self.default_scope
+    # Should return an ActiveRecord::Relation.
+  end
+end
+```
+
+>>>>>>> 29dd63d037d602b0a349a6db8ac5d9461dfb0970
 ### Removing All Scoping
 
-If we wish to remove scoping for any reason we can use the `unscoped` method. This is
-especially useful if a `default_scope` is specified in the model and should not be
-applied for this particular query.
+If we wish to remove scoping for any reason we can use the `unscoped` method. This is especially useful if a `default_scope` is specified in the model and should not be applied for this particular query.
 
 ```ruby
 Client.unscoped.load
@@ -1325,8 +1350,7 @@ Client.unscoped.load
 
 This method removes all scoping and will do a normal query on the table.
 
-Note that chaining `unscoped` with a `scope` does not work. In these cases, it is
-recommended that you use the block form of `unscoped`:
+Note that chaining `unscoped` with a `scope` does not work. In these cases, it is recommended that you use the block form of `unscoped`:
 
 ```ruby
 Client.unscoped {
@@ -1346,10 +1370,7 @@ If you want to find both by name and locked, you can chain these finders togethe
 Find or Build a New Object
 --------------------------
 
-NOTE: Some dynamic finders have been deprecated in Rails 4.0 and will be
-removed in Rails 4.1. The best practice is to use Active Record scopes
-instead. You can find the deprecation gem at
-https://github.com/rails/activerecord-deprecated_finders
+NOTE: Some dynamic finders have been deprecated in Rails 4.0 and will be removed in Rails 4.1. The best practice is to use Active Record scopes instead. You can find the deprecation gem at https://github.com/rails/activerecord-deprecated_finders
 
 It's common that you need to find a record or create it if it doesn't exist. You can do that with the `find_or_create_by` and `find_or_create_by!` methods.
 
@@ -1377,10 +1398,7 @@ COMMIT
 
 The new record might not be saved to the database; that depends on whether validations passed or not (just like `create`).
 
-Suppose we want to set the 'locked' attribute to `false` if we're
-creating a new record, but we don't want to include it in the query. So
-we want to find the client named "Andy", or if that client doesn't
-exist, create a client named "Andy" which is not locked.
+Suppose we want to set the 'locked' attribute to `false` if we're creating a new record, but we don't want to include it in the query. So we want to find the client named "Andy", or if that client doesn't exist, create a client named "Andy" which is not locked.
 
 We can achieve this in two ways. The first is to use `create_with`:
 
@@ -1396,8 +1414,7 @@ Client.find_or_create_by(first_name: 'Andy') do |c|
 end
 ```
 
-The block will only be executed if the client is being created. The
-second time we run this code, the block will be ignored.
+The block will only be executed if the client is being created. The second time we run this code, the block will be ignored.
 
 ### `find_or_create_by!`
 
@@ -1416,11 +1433,7 @@ Client.find_or_create_by!(first_name: 'Andy')
 
 ### `find_or_initialize_by`
 
-The `find_or_initialize_by` method will work just like
-`find_or_create_by` but it will call `new` instead of `create`. This
-means that a new model instance will be created in memory but won't be
-saved to the database. Continuing with the `find_or_create_by` example, we
-now want the client named 'Nick':
+The `find_or_initialize_by` method will work just like `find_or_create_by` but it will call `new` instead of `create`. This means that a new model instance will be created in memory but won't be saved to the database. Continuing with the `find_or_create_by` example, we now want the client named 'Nick':
 
 ```ruby
 nick = Client.find_or_initialize_by(first_name: 'Nick')
@@ -1503,10 +1516,7 @@ Client.pluck(:id)
 Client.pluck(:id, :name)
 ```
 
-Unlike `select`, `pluck` directly converts a database result into a Ruby `Array`,
-without constructing `ActiveRecord` objects. This can mean better performance for
-a large or often-running query. However, any model method overrides will
-not be available. For example:
+Unlike `select`, `pluck` directly converts a database result into a Ruby `Array`, without constructing `ActiveRecord` objects. This can mean better performance for a large or often-running query. However, any model method overrides will not be available. For example:
 
 ```ruby
 class Client < ActiveRecord::Base
@@ -1522,9 +1532,7 @@ Client.pluck(:name)
 # => ["David", "Jeremy", "Jose"]
 ```
 
-Furthermore, unlike `select` and other `Relation` scopes, `pluck` triggers an immediate
-query, and thus cannot be chained with any further scopes, although it can work with
-scopes already constructed earlier:
+Furthermore, unlike `select` and other `Relation` scopes, `pluck` triggers an immediate query, and thus cannot be chained with any further scopes, although it can work with scopes already constructed earlier:
 
 ```ruby
 Client.pluck(:name).limit(1)
@@ -1556,15 +1564,13 @@ Existence of Objects
 --------------------
 
 If you simply want to check for the existence of the object there's a method called `exists?`.
-This method will query the database using the same query as `find`, but instead of returning an
-object or collection of objects it will return either `true` or `false`.
+This method will query the database using the same query as `find`, but instead of returning an object or collection of objects it will return either `true` or `false`.
 
 ```ruby
 Client.exists?(1)
 ```
 
-The `exists?` method also takes multiple values, but the catch is that it will return `true` if any
-one of those records exists.
+The `exists?` method also takes multiple values, but the catch is that it will return `true` if any one of those records exists.
 
 ```ruby
 Client.exists?(id: [1,2,3])
@@ -1578,8 +1584,7 @@ It's even possible to use `exists?` without any arguments on a model or a relati
 Client.where(first_name: 'Ryan').exists?
 ```
 
-The above returns `true` if there is at least one client with the `first_name` 'Ryan' and `false`
-otherwise.
+The above returns `true` if there is at least one client with the `first_name` 'Ryan' and `false` otherwise.
 
 ```ruby
 Client.exists?
@@ -1712,8 +1717,7 @@ EXPLAIN for: SELECT `users`.* FROM `users` INNER JOIN `posts` ON `posts`.`user_i
 
 under MySQL.
 
-Active Record performs a pretty printing that emulates the one of the database
-shells. So, the same query running with the PostgreSQL adapter would yield instead
+Active Record performs a pretty printing that emulates the one of the database shells. So, the same query running with the PostgreSQL adapter would yield instead
 
 ```
 EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "posts" ON "posts"."user_id" = "users"."id" WHERE "users"."id" = 1
@@ -1728,9 +1732,7 @@ EXPLAIN for: SELECT "users".* FROM "users" INNER JOIN "posts" ON "posts"."user_i
 (6 rows)
 ```
 
-Eager loading may trigger more than one query under the hood, and some queries
-may need the results of previous ones. Because of that, `explain` actually
-executes the query, and then asks for the query plans. For example,
+Eager loading may trigger more than one query under the hood, and some queries may need the results of previous ones. Because of that, `explain` actually executes the query, and then asks for the query plans. For example,
 
 ```ruby
 User.where(id: 1).includes(:posts).explain
@@ -1760,8 +1762,7 @@ under MySQL.
 
 ### Interpreting EXPLAIN
 
-Interpretation of the output of EXPLAIN is beyond the scope of this guide. The
-following pointers may be helpful:
+Interpretation of the output of EXPLAIN is beyond the scope of this guide. The following pointers may be helpful:
 
 * SQLite3: [EXPLAIN QUERY PLAN](http://www.sqlite.org/eqp.html)
 

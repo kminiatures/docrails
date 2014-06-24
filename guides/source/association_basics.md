@@ -261,10 +261,8 @@ With `through: :sections` specified, Rails will now understand:
 
 ### The `has_one :through` Association
 
-A `has_one :through` association sets up a one-to-one connection with another model. This association indicates
-that the declaring model can be matched with one instance of another model by proceeding _through_ a third model.
-For example, if each supplier has one account, and each account is associated with one account history, then the
-supplier model could look like this:
+A `has_one :through` association sets up a one-to-one connection with another model. This association indicates that the declaring model can be matched with one instance of another model by proceeding _through_ a third model.
+For example, if each supplier has one account, and each account is associated with one account history, then the supplier model could look like this:
 
 ```ruby
 class Supplier < ActiveRecord::Base
@@ -709,11 +707,7 @@ There are a few limitations to `inverse_of` support:
 * They do not work with `:as` associations.
 * For `belongs_to` associations, `has_many` inverse associations are ignored.
 
-Every association will attempt to automatically find the inverse association
-and set the `:inverse_of` option heuristically (based on the association name).
-Most associations with standard names will be supported. However, associations
-that contain the following options will not have their inverses set
-automatically:
+Every association will attempt to automatically find the inverse association and set the `:inverse_of` option heuristically (based on the association name). Most associations with standard names will be supported. However, associations that contain the following options will not have their inverses set automatically:
 
 * :conditions
 * :through
@@ -879,10 +873,8 @@ Counter cache columns are added to the containing model's list of read-only attr
 ##### `:dependent`
 If you set the `:dependent` option to:
 
-* `:destroy`, when the object is destroyed, `destroy` will be called on its
-associated objects.
-* `:delete`, when the object is destroyed, all its associated objects will be
-deleted directly from the database without calling their `destroy` method.
+* `:destroy`, when the object is destroyed, `destroy` will be called on its associated objects.
+* `:delete`, when the object is destroyed, all its associated objects will be deleted directly from the database without calling their `destroy` method.
 
 WARNING: You should not specify this option on a `belongs_to` association that is connected with a `has_many` association on the other class. Doing so can lead to orphaned records in your database.
 
@@ -1157,11 +1149,7 @@ Controls what happens to the associated object when its owner is destroyed:
 * `:restrict_with_exception` causes an exception to be raised if there is an associated record
 * `:restrict_with_error` causes an error to be added to the owner if there is an associated object
 
-It's necessary not to set or leave `:nullify` option for those associations
-that have `NOT NULL` database constraints. If you don't set `dependent` to
-destroy such associations you won't be able to change the associated object
-because initial associated object foreign key will be set to unallowed `NULL`
-value.
+It's necessary not to set or leave `:nullify` option for those associations that have `NOT NULL` database constraints. If you don't set `dependent` to destroy such associations you won't be able to change the associated object because initial associated object foreign key will be set to unallowed `NULL` value.
 
 ##### `:foreign_key`
 
@@ -1555,9 +1543,7 @@ end
 
 By convention, Rails assumes that the column used to hold the primary key of the association is `id`. You can override this and explicitly specify the primary key with the `:primary_key` option.
 
-Let's say that `users` table has `id` as the primary_key but it also has
-`guid` column. And the requirement is that `todos` table should hold
-`guid` column value and not `id` value. This can be achieved like this
+Let's say that `users` table has `id` as the primary_key but it also has `guid` column. And the requirement is that `todos` table should hold `guid` column value and not `id` value. This can be achieved like this
 
 ```ruby
 class User < ActiveRecord::Base
@@ -1719,8 +1705,7 @@ WARNING: If you specify your own `select`, be sure to include the primary key an
 
 ##### `distinct`
 
-Use the `distinct` method to keep the collection free of duplicates. This is
-mostly useful together with the `:through` option.
+Use the `distinct` method to keep the collection free of duplicates. This is mostly useful together with the `:through` option.
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -1736,8 +1721,7 @@ person.posts.inspect # => [#<Post id: 5, name: "a1">, #<Post id: 5, name: "a1">]
 Reading.all.inspect  # => [#<Reading id: 12, person_id: 5, post_id: 5>, #<Reading id: 13, person_id: 5, post_id: 5>]
 ```
 
-In the above case there are two readings and `person.posts` brings out both of
-them even though these records are pointing to the same post.
+In the above case there are two readings and `person.posts` brings out both of them even though these records are pointing to the same post.
 
 Now let's set `distinct`:
 
@@ -1755,25 +1739,15 @@ person.posts.inspect # => [#<Post id: 7, name: "a1">]
 Reading.all.inspect  # => [#<Reading id: 16, person_id: 7, post_id: 7>, #<Reading id: 17, person_id: 7, post_id: 7>]
 ```
 
-In the above case there are still two readings. However `person.posts` shows
-only one post because the collection loads only unique records.
+In the above case there are still two readings. However `person.posts` shows only one post because the collection loads only unique records.
 
-If you want to make sure that, upon insertion, all of the records in the
-persisted association are distinct (so that you can be sure that when you
-inspect the association that you will never find duplicate records), you should
-add a unique index on the table itself. For example, if you have a table named
-`person_posts` and you want to make sure all the posts are unique, you could
-add the following in a migration:
+If you want to make sure that, upon insertion, all of the records in the persisted association are distinct (so that you can be sure that when you inspect the association that you will never find duplicate records), you should add a unique index on the table itself. For example, if you have a table named `person_posts` and you want to make sure all the posts are unique, you could add the following in a migration:
 
 ```ruby
 add_index :person_posts, :post, unique: true
 ```
 
-Note that checking for uniqueness using something like `include?` is subject
-to race conditions. Do not attempt to use `include?` to enforce distinctness
-in an association. For instance, using the post example from above, the
-following code would be racy because multiple users could be attempting this
-at the same time:
+Note that checking for uniqueness using something like `include?` is subject to race conditions. Do not attempt to use `include?` to enforce distinctness in an association. For instance, using the post example from above, the following code would be racy because multiple users could be attempting this at the same time:
 
 ```ruby
 person.posts << post unless person.posts.include?(post)
