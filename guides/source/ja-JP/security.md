@@ -844,7 +844,7 @@ RedCloth.new("<a href='javascript:alert(1)'>hello</a>", [:filter_html]).to_html
 
 XSS対応策で既に述べたとおり、_RedClothは必ずホワイトリストフィルタと組み合わせて使用してください_ 。
 
-### Ajax注入
+### Ajaxインジェクション
 
 メモ: _通常のWebアプリケーション開発上で必要となるセキュリティ上の注意と同様の注意がAjaxに対しても必要です。ただし1つ例外があります。ページヘの出力は、アクションがビューをレンダリングしない場合であってもエスケープされている必要があります。_
 
@@ -993,7 +993,7 @@ _'nosniff' はRailsではデフォルトです_ - ファイルのMIMEタイプ�
 * X-Content-Security-Policy
 [コンテンツタイプを読み込む元のサイトを制御するための強力なメカニズム](http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html)です。
 * Access-Control-Allow-Origin
-同一生成元ポリシーのバイパスと生成元間リクエスト●(cross-origin request)をサイトごとに許可します。
+同一生成元ポリシーのバイパスとクロスオリジン(cross-origin)リクエストをサイトごとに許可します。
 * Strict-Transport-Security
 [ブラウザからサイトへの接続をセキュアなものに限って許可するかどうかを指定します](http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security)
 
